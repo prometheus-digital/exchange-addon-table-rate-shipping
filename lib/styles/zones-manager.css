@@ -1,0 +1,29 @@
+#it-exchange-table-rate-shipping-zones-manager-label { line-height: 1.2; font-size: .75em; }
+
+#it-exchange-table-rate-shipping-zones-manager-wrapper {display: none; background: #FFF;background: rgba(255,255,255,0.7);z-index: 100001;position: fixed;top: 0;right: 0;bottom: 0;left: 0;}
+#it-exchange-table-rate-shipping-zones-manager-wrapper .it-exchange-etrs-close-zones-manager {position: fixed;top: 10px;right: 10px;}
+#it-exchange-table-rate-shipping-zones-manager-wrapper .it-exchange-etrs-close-zones-manager a {color: #222;font-size: 3em;line-height: 1em;text-decoration: none;}
+#it-exchange-table-rate-shipping-zones-manager-wrapper .it-exchange-etrs-close-zones-manager a:hover {color: #444;}
+
+#it-exchange-table-rate-shipping-zones-manager {position: relative;background: #fff;width:100%;border:1px solid #ccc;max-width:800px;min-height:300px;max-height:75%;margin:100px auto;padding-top:4em;text-align:left;overflow:hidden;overflow-y:auto;-webkit-border-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;}
+#it-exchange-table-rate-shipping-zones-manager-title-area {position: absolute;top: 0;width: 100%;max-width: 100%;overflow: hidden;border-bottom: 1px solid #CCCCCC;padding: 0 2em; box-sizing: border-box;}
+#it-exchange-table-rate-shipping-zones-manager-title-area .it-exchange-etrs-tax-emeption-title {font-size: 1.4em;line-height: 1;color: #444;margin: .5em 1em;float:left;}
+#it-exchange-table-rate-shipping-zones-manager-title-area .it-exchange-etrs-close-zones-manager {float:right;}
+#it-exchange-table-rate-shipping-zones-manager-title-area .it-exchange-etrs-close-zones-manager a {display: block;padding: .5em .75em;font-size: 1.4em;line-height: 1;background: #444;color: #fff;}
+#it-exchange-table-rate-shipping-zones-manager-title-area .it-exchange-etrs-close-zones-manager a:hover {background: #222;}
+
+#it-exchange-add-on-table-rate-shipping-add-edit-vat select,
+#it-exchange-add-on-table-rate-shipping-add-edit-vat input[type="text"] {margin: .5em 0;}
+#it-exchange-add-on-table-rate-shipping-add-edit-vat .it-exchange-add-zones-submit {margin-top: 2em;}
+
+#it-exchange-table-rate-shipping-zones-manager-content-area {display: block;padding: 2em;}
+#it-exchange-value-added-tax-add-zones-number {display: block;padding: 2em;float: left;}
+#it-exchange-table-rate-shipping-zones-manager-content-area h3 {margin-top: 0;}
+#it-exchange-table-rate-shipping-zones-manager-content-area p {margin: 0 0 10px 0;}
+
+#it-exchange-table-rate-shipping-zones-manager-content-area .it-exchange-table-rate-shipping-add-zones-section {padding: 0 .25em 1em .25em;margin-bottom: 1em;border-bottom: 1px solid #ebebeb;overflow:hidden;}
+#it-exchange-table-rate-shipping-zones-manager-content-area .it-exchange-table-rate-shipping-add-zones-section .it-exchange-zones-section-half-width {float:left;width: 50%;padding-right: 1em;-webkit-border-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;}
+
+@media screen and (max-width: 600px) {
+	#it-exchange-table-rate-shipping-zones-manager-content-area .it-exchange-table-rate-shipping-add-zones-section .it-exchange-zones-section-half-width {float:none;width: 100%;padding-right: 1em;padding-left: 1em;}
+}
