@@ -51,7 +51,7 @@ function it_exchange_table_rate_shipping_addon_admin_wp_enqueue_scripts( $hook_s
 		wp_enqueue_script( 'ite-etrs-addon-zones-manager', $url_base . '/js/zones-manager.js', $deps );
 		wp_enqueue_style( 'ite-etrs-addon-zones-manager', $url_base . '/styles/zones-manager.css' );
 	
-		add_action( 'admin_footer', 'it_exchange_table_rate_shipping_addon_zones_manager_backbone_template' );
+		add_action( 'it_exchange_table_rate_shipping_print_shipping_tab_footer', 'it_exchange_table_rate_shipping_addon_zones_manager_backbone_template' );
 
 	}
 		
@@ -136,7 +136,7 @@ add_action( 'admin_init', 'it_exchange_table_rate_shipping_settings_redirect' );
  * Backbone template for listing all existing zones in the Zones Manager.
  * Invoked by wp.template() and WordPress 
  *
- * Called by add_action( 'wp_footer', 'it_exchange_table_rate_shipping_addon_zones_manager_backbone_template' );
+ * Called by add_action( 'it_exchange_table_rate_shipping_print_shipping_tab_footer', 'it_exchange_table_rate_shipping_addon_zones_manager_backbone_template' );
  *
  * @since 1.0.0
  */
@@ -161,7 +161,7 @@ function it_exchange_table_rate_shipping_addon_zones_manager_backbone_template()
 							$headings = array(
 								__( 'Country', 'LION' ), 
 								__( 'State', 'LION' ),
-								__( 'Postal Code(s)', 'LION' ), 
+								sprintf( __( 'Postal Code(s) %s', 'LION' ), it_exchange_admin_tooltip( __( 'An asterisk (*) would apply the cost to all postal codes within the designated country/state. You can specify a range of postal codes by separating two postal codes with a dash (-); e.g. 73013-73018.', 'LION' ), false ) ),
 								__( 'Delete', 'LION' ), 
 							);
 							echo '<div class="heading-row block-row">';

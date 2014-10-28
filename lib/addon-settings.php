@@ -79,6 +79,7 @@ function it_exchange_table_rate_shipping_print_shipping_tab() {
 		<?php $form->end_form(); ?>
 	</div>
 	<?php
+	do_action( 'it_exchange_table_rate_shipping_print_shipping_tab_footer' );
 }
 
 /**
@@ -101,15 +102,15 @@ function it_exchange_table_rate_shipping_get_settings_form_table( $form, $settin
         	<?php
 			$headings = array(
 				__( 'Enabled', 'LION' ), 
-				__( 'Label', 'LION' ),
-				__( 'Calculation', 'LION' ),
-				__( 'Condition', 'LION' ), 
-				__( 'Min', 'LION' ), 
-				__( 'Max', 'LION' ), 
-				__( 'Handling', 'LION' ), 
-				__( 'Base Cost', 'LION' ),
-				__( 'Per Item Cost', 'LION' ),
-				__( 'Zones', 'LION' ), 
+				sprintf( __( 'Label %s', 'LION' ), it_exchange_admin_tooltip( __( 'The name of your shipping option (ex:  "Free Shipping over $50" or "In State Shipping").', 'LION' ), false ) ),
+				sprintf( __( 'Calculation %s', 'LION' ), it_exchange_admin_tooltip( __( 'How the shipping rate is calculated, by order, by number of items or number of products.<ul><li>Per Order - Shipping would be applied only once for the order</li><li>Per Item - Shipping would be applied for each item in the cart</li><li>Per Product - Shipping would be applied based on the number of products in the cart (multiples of a product would only be charged once)</li></ul>', 'LION' ), false ) ),
+				sprintf( __( 'Condition %s', 'LION' ), it_exchange_admin_tooltip( __( "The condition that the shipping cost is based on, for instance the price of the customer's order.", 'LION' ), false ) ), 
+				sprintf( __( 'Min %s', 'LION' ), it_exchange_admin_tooltip( __( '(optional) The minimum amount for the condition to be met (ex:  Condition is Price, minimum price could be $50 for free shipping or Condition is Item Count - minimum item count could be 10 items to qualify for that shipping price).', 'LION' ), false ) ), 
+				sprintf( __( 'Max %s', 'LION' ), it_exchange_admin_tooltip( __( '(optional) The maximum amount for the condition to be met (ex:  Condition is Price, maximum price could be $150 for free shipping or Condition is Item Count - maximum item count could be 20 items to qualify for that shipping price).', 'LION' ), false ) ), 
+				sprintf( __( 'Handling %s', 'LION' ), it_exchange_admin_tooltip( __( '(optional) The handling cost for this shipping rate.', 'LION' ), false ) ), 
+				sprintf( __( 'Base Cost %s', 'LION' ), it_exchange_admin_tooltip( __( 'The base shipping price for the shipping rate.', 'LION' ), false ) ),
+				sprintf( __( 'Per Item Cost %s', 'LION' ), it_exchange_admin_tooltip( __( '(optional) If you chose to charge per item in an order, you would set the price to be charged per item here.', 'LION' ), false ) ),
+				sprintf( __( 'Zones %s', 'LION' ), it_exchange_admin_tooltip( __( 'The geographical location for which this shipping cost would be applied.', 'LION' ), false ) ), 
 				__( 'Delete', 'LION' ), 
 			);
 					
