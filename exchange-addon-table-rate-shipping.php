@@ -26,7 +26,7 @@
 function it_exchange_register_table_rate_shipping_addon() {
 	$options = array(
 		'name'              => __( 'Table Rate Shipping', 'LION' ),
-		'description'       => __( 'BLAH BLAH BLAH.', 'LION' ),
+		'description'       => __( 'The Table Rate Shipping add-on enables highly customizable shipping options for iThemes Exchange.', 'LION' ),
 		'author'            => 'iThemes',
 		'author_url'        => 'http://ithemes.com/exchange/table-rate-shipping/',
 		'icon'              => ITUtility::get_url_from_file( dirname( __FILE__ ) . '/lib/images/shipping50px.png' ),
