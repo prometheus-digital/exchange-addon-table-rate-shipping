@@ -55,6 +55,14 @@ function it_exchange_table_rate_shipping_form_table_table_rate_settings( $table_
 	$return .= '</div>';
 	
 	$return .= '<div class="item-column block-column block-column-3">';
+	$return .= '<select class="it-exchange-table-rate-shipping-addon-calculation-type" name="it-exchange-table-rate-shipping-addon-table-rate[' . $table_rate_id . '][calculation-type]">';
+		$return .= '<option value="per_order" ' . selected( 'per_order', $table_rate['calculation-type'], false ) . '">' . __( 'Per Order', 'LION' ) . '</option>';
+		$return .= '<option value="per_item" ' . selected( 'per_item', $table_rate['calculation-type'], false ) . '">' . __( 'Per Item', 'LION' ) . '</option>';
+		$return .= '<option value="per_line" ' . selected( 'per_line', $table_rate['calculation-type'], false ) . '">' . __( 'Per Line', 'LION' ) . '</option>';
+	$return .= '</select>';
+	$return .= '</div>';
+	
+	$return .= '<div class="item-column block-column block-column-4">';
 	if ( 'default' === $table_rate['enabled'] ) {
 		$return .= '<span class="it-exchange-table-rate-shipping-addon-condition">' . __( 'N/A', 'LION' ) . '</span>';
 	} else {
@@ -83,7 +91,7 @@ function it_exchange_table_rate_shipping_form_table_table_rate_settings( $table_
 		$max = $table_rate['max'];
 	}
 	
-	$return .= '<div class="item-column block-column block-column-4">';
+	$return .= '<div class="item-column block-column block-column-5">';
 	if ( 'default' === $table_rate['enabled'] ) {
 		$return .= '<span class="it-exchange-table-rate-shipping-addon-min">' . __( 'N/A', 'LION' ) . '</span>';
 	} else {
@@ -91,7 +99,7 @@ function it_exchange_table_rate_shipping_form_table_table_rate_settings( $table_
 	}
 	$return .= '</div>';
 
-	$return .= '<div class="item-column block-column block-column-5">';
+	$return .= '<div class="item-column block-column block-column-6">';
 	if ( 'default' === $table_rate['enabled'] ) {
 		$return .= '<span class="it-exchange-table-rate-shipping-addon-max">' . __( 'N/A', 'LION' ) . '</span>';
 	} else {
@@ -99,24 +107,16 @@ function it_exchange_table_rate_shipping_form_table_table_rate_settings( $table_
 	}
 	$return .= '</div>';
 	
-	$return .= '<div class="item-column block-column block-column-6">';
+	$return .= '<div class="item-column block-column block-column-7">';
 	$return .= '<input type="text" class="it-exchange-table-rate-shipping-addon-handling-fee small-text" name="it-exchange-table-rate-shipping-addon-table-rate[' . $table_rate_id . '][handling-fee]" value="' . html_entity_decode( it_exchange_format_price( it_exchange_convert_from_database_number( $table_rate['handling-fee'] ) ) ) . '" />';
 	$return .= '</div>';
 	
-	$return .= '<div class="item-column block-column block-column-7">';
+	$return .= '<div class="item-column block-column block-column-8">';
 	$return .= '<input type="text" class="it-exchange-table-rate-shipping-addon-base-cost small-text" name="it-exchange-table-rate-shipping-addon-table-rate[' . $table_rate_id . '][base-cost]" value="' . html_entity_decode( it_exchange_format_price( it_exchange_convert_from_database_number( $table_rate['base-cost'] ) ) ) . '" />';
 	$return .= '</div>';
 	
-	$return .= '<div class="item-column block-column block-column-8">';
-	$return .= '<input type="text" class="it-exchange-table-rate-shipping-addon-item-cost small-text" name="it-exchange-table-rate-shipping-addon-table-rate[' . $table_rate_id . '][item-cost]" value="' . html_entity_decode( it_exchange_format_price( it_exchange_convert_from_database_number( $table_rate['item-cost'] ) ) ) . '" />';
-	$return .= '</div>';
-	
 	$return .= '<div class="item-column block-column block-column-9">';
-	$return .= '<select class="it-exchange-table-rate-shipping-addon-calculation-type" name="it-exchange-table-rate-shipping-addon-table-rate[' . $table_rate_id . '][calculation-type]">';
-		$return .= '<option value="per_order" ' . selected( 'per_order', $table_rate['calculation-type'], false ) . '">' . __( 'Per Order', 'LION' ) . '</option>';
-		$return .= '<option value="per_item" ' . selected( 'per_item', $table_rate['calculation-type'], false ) . '">' . __( 'Per Item', 'LION' ) . '</option>';
-		$return .= '<option value="per_line" ' . selected( 'per_line', $table_rate['calculation-type'], false ) . '">' . __( 'Per Line', 'LION' ) . '</option>';
-	$return .= '</select>';
+	$return .= '<input type="text" class="it-exchange-table-rate-shipping-addon-item-cost small-text" name="it-exchange-table-rate-shipping-addon-table-rate[' . $table_rate_id . '][item-cost]" value="' . html_entity_decode( it_exchange_format_price( it_exchange_convert_from_database_number( $table_rate['item-cost'] ) ) ) . '" />';
 	$return .= '</div>';
 	
 	$return .= '<div class="item-column block-column block-column-10">';
@@ -124,7 +124,7 @@ function it_exchange_table_rate_shipping_form_table_table_rate_settings( $table_
 		$return .= __( 'Default (Everywhere)', 'LION' );
 	} else {
 		$return .= '<div class="table-rate-zones">';
-		$return .= it_exchange_table_rate_shipping_prepare_zone_ouput( $table_rate['geo-restrictions'] );
+		$return .= it_exchange_table_rate_shipping_prepare_zone_ouput( $table_rate['geo-restrictions'], $table_rate_id );
 		$return .= '</div>';
 		$return .= '<a class="edit-table-rate-zones" data-rate-id="' . $table_rate_id . '" href="#">Edit Zones</a>';
 	}
@@ -150,7 +150,7 @@ function it_exchange_table_rate_shipping_form_table_table_rate_settings( $table_
  * @param array $zones - Zone set
  * @return string - HTML formated zone row
 */
-function it_exchange_table_rate_shipping_prepare_zone_ouput( $zones=false ) {
+function it_exchange_table_rate_shipping_prepare_zone_ouput( $zones=false, $table_rate_id ) {
 	$return = '';
 	if ( !empty( $zones ) ) {
 		$zone_count = count( $zones );
@@ -180,9 +180,10 @@ function it_exchange_table_rate_shipping_prepare_zone_ouput( $zones=false ) {
 		
 			$data[] = $country_str . ', ' . $state_str . ', ' . $zipcode;
 		}
+		$data[] = "<a class='edit-table-rate-zones' data-rate-id='" . $table_rate_id . "' href='#'>Edit Zones</a>";
 		$return .= '<span data-tip-content="' . join( '<br />', $data ) . '" class="it-exchange-tip">' . $zone_count . '</span>';
 	} else {
-		$return .= '<span data-tip-content="' . __( 'No Zones Found', 'LION' ) . '" class="it-exchange-tip">0</span>';
+		$return .= '<span class="it-exchange-tip">0</span>';
 	}
 	return $return;
 }

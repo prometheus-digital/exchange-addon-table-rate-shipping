@@ -257,7 +257,7 @@ function it_exchange_table_rate_shipping_addon_ajax_add_zones() {
 					}
 				}
 	
-				wp_send_json_success( array( 'zone_output' => it_exchange_table_rate_shipping_prepare_zone_ouput( $saved_zones ) ) );
+				wp_send_json_success( array( 'zone_output' => it_exchange_table_rate_shipping_prepare_zone_ouput( $saved_zones, $_REQUEST['rate-id'] ) ) );
 	
 			} else {
 		
@@ -305,7 +305,7 @@ add_action( 'wp_ajax_it-exchange-table-rate-shipping-save-rates', 'it_exchange_t
 */
 function it_exchange_table_rate_shipping_addon_ajax_format_pricing() {
 	$price = '';
-	if ( !empty( $_POST['input'] ) ) {
+	if ( !empty( $_POST['input'] ) || ( empty( $_POST['input'] ) && 0 == $_POST['input'] ) ) {
 		$price = html_entity_decode( it_exchange_format_price( it_exchange_convert_from_database_number( it_exchange_convert_to_database_number( $_POST['input'] ) ) ) );
 	}
 	die( $price );		
