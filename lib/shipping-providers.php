@@ -12,7 +12,7 @@
  *
  * @return void
 */
-function it_exchange_addon_table_rate_shipping_register_shipping_provider() {
+function it_exchange_table_rate_shipping_addon_register_shipping_provider() {
 	$methods = array( 'default-table-rate-shipping-method' ); //default method, needs to be added to the list first
 	
 	$args = array(
@@ -34,4 +34,4 @@ function it_exchange_addon_table_rate_shipping_register_shipping_provider() {
     );
     it_exchange_register_shipping_provider( 'table-rate-shipping', $options );
 }
-add_filter( 'it_exchange_enabled_addons_loaded', 'it_exchange_addon_table_rate_shipping_register_shipping_provider' );
+add_filter( 'it_exchange_enabled_addons_loaded', 'it_exchange_table_rate_shipping_addon_register_shipping_provider' );

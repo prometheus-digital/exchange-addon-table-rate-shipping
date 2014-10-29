@@ -6,13 +6,13 @@
 */
 
 /**
- * Registers the Shipping Methods we need for Exchange Simple Shipping add-on
+ * Registers the Shipping Methods we need for Exchange Table Rate Shipping add-on
  *
  * @since 1.0.0
  *
  * @return void
 */
-function it_exchange_addon_table_rate_shipping_register_flat_rate_shipping_method() {	
+function it_exchange_table_rate_shipping_addon_register_shipping_methods() {	
 	$default_table_rate = it_exchange_table_rate_shipping_get_table_rate( 0 ); //default always set rate
 	$args = array(
 		'ID'    => 0,
@@ -38,4 +38,4 @@ function it_exchange_addon_table_rate_shipping_register_flat_rate_shipping_metho
 		}
 	}
 }
-add_action( 'it_exchange_enabled_addons_loaded', 'it_exchange_addon_table_rate_shipping_register_flat_rate_shipping_method' );
+add_action( 'it_exchange_enabled_addons_loaded', 'it_exchange_table_rate_shipping_addon_register_shipping_methods' );
