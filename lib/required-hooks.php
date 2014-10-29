@@ -42,10 +42,10 @@ function it_exchange_table_rate_shipping_addon_admin_wp_enqueue_scripts( $hook_s
 		wp_enqueue_script( 'it-exchange-dialog');
 
 		$deps = array( 'jquery', 'wp-backbone', 'underscore' );
-		wp_enqueue_script( 'ite-aut-addon-zone-model',  $url_base . '/js/models/zone-model.js', $deps );
-		$deps[] =  'ite-aut-addon-zone-model';
-		wp_enqueue_script( 'ite-aut-addon-zone-collections',  $url_base . '/js/collections/zone-collections.js', $deps );
-		$deps[] =  'ite-aut-addon-zone-collections';
+		wp_enqueue_script( 'ite-etrs-addon-zone-model',  $url_base . '/js/models/zone-model.js', $deps );
+		$deps[] =  'ite-etrs-addon-zone-model';
+		wp_enqueue_script( 'ite-etrs-addon-zone-collections',  $url_base . '/js/collections/zone-collections.js', $deps );
+		$deps[] =  'ite-etrs-addon-zone-collections';
 		wp_enqueue_script( 'ite-etrs-addon-zones-views',  $url_base . '/js/views/zones-views.js', $deps );
 		$deps[] =  'ite-etrs-addon-zones-views';
 		wp_enqueue_script( 'ite-etrs-addon-zones-manager', $url_base . '/js/zones-manager.js', $deps );
@@ -218,7 +218,6 @@ add_filter( 'it_exchange_super_widget_valid_states', 'it_exchange_table_rate_shi
  * @return array $shipping_methods
 */
 function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart( $shipping_methods ) {
-	
 	if ( $GLOBALS['it_exchange']['shipping']['only_return_methods_available_to_all_cart_products'] ) {
 	
 		if ( !empty( $shipping_methods ) ) {
@@ -316,7 +315,7 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 		}
 				
 	}
-	
+
 	return $shipping_methods;
 }
 add_filter( 'it_exchange_get_available_shipping_methods_for_cart', 'it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart' );
@@ -369,11 +368,10 @@ function it_exchange_table_rate_shipping_get_cart_shipping_cost( $cart_cost, $sh
 						$cart_cost = $handling + $base_cost + ( $per_item_cost * $cart_total_item_count );
 						break;
 				}
+				$cart_cost = empty( $format_price ) ? $cart_cost : it_exchange_format_price( $cart_cost );
 			}
 		}
 	}
-	
-	$cart_cost = empty( $format_price ) ? $cart_cost : it_exchange_format_price( $cart_cost );
 	return $cart_cost;
 }
 add_filter( 'it_exchange_get_cart_shipping_cost', 'it_exchange_table_rate_shipping_get_cart_shipping_cost', 10, 4 );
@@ -489,7 +487,6 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 			}
 		}
 	}
-	
 	return $shipping_methods;
 }
 add_filter( 'it_exchange_get_available_shipping_methods_for_product_provider_methods', 'it_exchange_table_rate_shipping_get_available_shipping_methods_for_product_provider_methods', 10, 2 );
@@ -531,11 +528,10 @@ function it_exchange_table_rate_shipping_get_shipping_method_cost_for_cart_item(
 						$cost = $handling + $base_cost + ( $per_item_cost * $item_count );
 						break;
 				}
+				$cost = empty( $format_price ) ? $cost : it_exchange_format_price( $cost );
 			}
 		}
 	}
-	
-	$cost = empty( $format_price ) ? $cost : it_exchange_format_price( $cost );
 	
 	return $cost;
 }
