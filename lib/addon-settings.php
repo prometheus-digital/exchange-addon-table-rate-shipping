@@ -45,8 +45,8 @@ function it_exchange_table_rate_shipping_print_shipping_tab() {
 	}
 	
 	$form_options = array(
-		'id'      => apply_filters( 'it_exchange_add_on_eu_value_added_taxes', 'it-exchange-add-on-table-rate-shipping-settings' ),
-		'enctype' => apply_filters( 'it_exchange_add_on_eu_value_added_taxes_settings_form_enctype', false ),
+		'id'      => apply_filters( 'it_exchange_add_on_table_rate_shipping', 'it-exchange-add-on-table-rate-shipping-settings' ),
+		'enctype' => apply_filters( 'it_exchange_add_on_table_rate_shipping_settings_form_enctype', false ),
 		'action'  => 'admin.php?page=it-exchange-settings&tab=shipping&provider=table-rate-shipping',
 	);
 	$form         = new ITForm( $form_values, array( 'prefix' => 'it-exchange-add-on-table-rate-shipping' ) );
@@ -70,9 +70,9 @@ function it_exchange_table_rate_shipping_print_shipping_tab() {
 		?>
 		
 		<?php $form->start_form( $form_options, 'it-exchange-table-rate-shipping-settings' ); ?>
-			<?php do_action( 'it_exchange_eu_value_added_taxes_settings_form_top' ); ?>
+			<?php do_action( 'it_exchange_table_rate_shipping_settings_form_top' ); ?>
 			<?php it_exchange_table_rate_shipping_get_settings_form_table( $form, $form_values ); ?>
-			<?php do_action( 'it_exchange_eu_value_added_taxes_settings_form_bottom' ); ?>
+			<?php do_action( 'it_exchange_table_rate_shipping_settings_form_bottom' ); ?>
 			<p class="submit">
 				<?php $form->add_submit( 'submit', array( 'value' => __( 'Save Changes', 'LION' ), 'class' => 'button button-primary button-large' ) ); ?>
 			</p>
