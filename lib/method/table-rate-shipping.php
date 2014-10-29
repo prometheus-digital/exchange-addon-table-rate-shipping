@@ -73,6 +73,7 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 		$this->shipping_features = array(
 			'core-from-address',
 			'core-weight-dimensions',
+			'core-available-shipping-methods'
 		);
 	}
 
@@ -84,8 +85,7 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 	 * @return void
 	*/
 	function set_enabled() {
-		$break_cache   = is_admin() && ! empty( $_POST );
-		$options       = it_exchange_get_option( 'addon_table_rate_shipping', $break_cache );
+		$options = it_exchange_table_rate_shipping_get_table_rate( $this->table_rate_args['ID'] );
 		$this->enabled = ! empty( $options['enabled'] );
 	}
 
