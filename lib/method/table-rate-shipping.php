@@ -71,8 +71,7 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 	*/
 	function set_features() {
 		$this->shipping_features = array(
-			'core-from-address',
-			'core-weight-dimensions',
+			'core-weight',
 			'core-available-shipping-methods'
 		);
 	}
