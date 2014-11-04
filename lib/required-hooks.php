@@ -294,9 +294,9 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 							
 							case 'price':
 							default:
-								if ( !empty( $table_rate_settings['min'] ) && $cart_total < $table_rate_settings['min'] ) {
+								if ( !empty( $table_rate_settings['min'] ) && $cart_total < it_exchange_convert_from_database_number( $table_rate_settings['min'] ) ) {
 									$unset = true; //We need to unset this method, it's not usable in this cart
-								} else if ( !empty( $table_rate_settings['max'] ) && $cart_total >  $table_rate_settings['max'] ) {
+								} else if ( !empty( $table_rate_settings['max'] ) && $cart_total >  it_exchange_convert_from_database_number( $table_rate_settings['max'] ) ) {
 									$unset = true; //We need to unset this method, it's not usable in this cart
 								} 
 								break;
