@@ -389,6 +389,7 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 				$product_weight = $weight * $item_count;
 				
 				$product_total = it_exchange_get_cart_product_base_price( array( 'product_id' => $product->ID ), false ) * $item_count;
+				$product_overriding_default_methods = it_exchange_get_shipping_feature_for_product( 'core-available-shipping-methods', $product->ID );
 	
 				foreach ( $shipping_methods as $shipping_method ) {	
 					
@@ -402,73 +403,78 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 							if ( 'default-table-rate-shipping-method' === $shipping_method ) {
 								continue; //We don't need to test default, it doesn't handle a condition, so skip this			
 							}
-			
-							$table_rate_settings = it_exchange_table_rate_shipping_get_table_rate( $shipping_method );
-							if ( 'checked' === $table_rate_settings['enabled'] ) {
-								if ( !empty( $table_rate_settings['geo-restrictions'] ) ) {
-								
-									foreach( $table_rate_settings['geo-restrictions'] as $zone_id ) {
-										$unset = true; 	//We're just going to assume that we'll hit a zone limit, but if we get a positive match
-														//we'll set $unset to false and break out of this loop.
-										
-										$country = get_post_meta( $zone_id, '_it_exchange_etrs_country_zone', true );
-										if ( empty( $country ) || '*' == $country ) {
-											$unset = false; 	//Country is the highest level zone, if it's All, then it has to be all States/Postal Codes, 
-											break;			//so we don't skip this zone.
-										} else if ( $shipping_address['country'] === $country ) {
-											$state = get_post_meta( $zone_id, '_it_exchange_etrs_state_zone', true );
-											if( empty( $state ) || '*' == $state ) {
-												$unset = false; 	//Country matches and State is a wildcard, so we can skip and break 
-												break;
-											} else if ( $shipping_address['state'] === $state ){
-												$zipcodes = get_post_meta( $zone_id, '_it_exchange_etrs_zipcode_zone', true );
-												if( empty( $zipcodes ) || '*' === key( $zipcodes ) || in_array( $shipping_address['zip'], $zipcodes ) ) {
-													$unset = false; //Country and State match, and Postal Code is a wildcard or a match, so we can skip and break 
+                            if ( false !== $product_overriding_default_methods && empty( $product_overriding_default_methods->$shipping_method ) ) { //If this shipping method has been disable in the product, disable it here as well
+	                            //We need to do this because of how we're handling the Default shipping rate
+	                            //Otherwise a "matching" rate that is disabled would unset the default rate
+                                $unset = true;
+                            } else {
+								$table_rate_settings = it_exchange_table_rate_shipping_get_table_rate( $shipping_method );
+								if ( 'checked' === $table_rate_settings['enabled'] ) {
+									if ( !empty( $table_rate_settings['geo-restrictions'] ) ) {
+									
+										foreach( $table_rate_settings['geo-restrictions'] as $zone_id ) {
+											$unset = true; 	//We're just going to assume that we'll hit a zone limit, but if we get a positive match
+															//we'll set $unset to false and break out of this loop.
+											
+											$country = get_post_meta( $zone_id, '_it_exchange_etrs_country_zone', true );
+											if ( empty( $country ) || '*' == $country ) {
+												$unset = false; 	//Country is the highest level zone, if it's All, then it has to be all States/Postal Codes, 
+												break;			//so we don't skip this zone.
+											} else if ( $shipping_address['country'] === $country ) {
+												$state = get_post_meta( $zone_id, '_it_exchange_etrs_state_zone', true );
+												if( empty( $state ) || '*' == $state ) {
+													$unset = false; 	//Country matches and State is a wildcard, so we can skip and break 
 													break;
-												}			
+												} else if ( $shipping_address['state'] === $state ){
+													$zipcodes = get_post_meta( $zone_id, '_it_exchange_etrs_zipcode_zone', true );
+													if( empty( $zipcodes ) || '*' === key( $zipcodes ) || in_array( $shipping_address['zip'], $zipcodes ) ) {
+														$unset = false; //Country and State match, and Postal Code is a wildcard or a match, so we can skip and break 
+														break;
+													}			
+												}
 											}
 										}
 									}
+								} else {
+									$unset = true; //this table rate is not enabled
 								}
-							} else {
-								$unset = true; //this table rate is not enabled
-							}
-							
-							if ( !$unset ) {			
-								switch( $table_rate_settings['condition'] ) {
-									case 'weight':
-										if ( !empty( $table_rate_settings['min'] ) && $product_weight < $table_rate_settings['min'] ) {
-											$unset = true; //We need to unset this method, it's not usable in this cart
-										} else if ( !empty( $table_rate_settings['max'] ) && $product_weight > $table_rate_settings['max'] ) {
-											$unset = true; //We need to unset this method, it's not usable in this cart
-										}							
-										break;
+								
+								if ( !$unset ) {			
+									switch( $table_rate_settings['condition'] ) {
+										case 'weight':
+											if ( !empty( $table_rate_settings['min'] ) && $product_weight < $table_rate_settings['min'] ) {
+												$unset = true; //We need to unset this method, it's not usable in this cart
+											} else if ( !empty( $table_rate_settings['max'] ) && $product_weight > $table_rate_settings['max'] ) {
+												$unset = true; //We need to unset this method, it's not usable in this cart
+											}							
+											break;
+											
+										case 'item_count':
+											if ( !empty( $table_rate_settings['min'] ) && $item_count < $table_rate_settings['min'] ) {
+												$unset = true; //We need to unset this method, it's not usable in this cart
+											} else if ( !empty( $table_rate_settings['max'] ) && $item_count > $table_rate_settings['max'] ) {
+												$unset = true; //We need to unset this method, it's not usable in this cart
+											} 
+											break;
+					
+										case 'product_count': //there is only 1 product in the cart for this call
+											if ( !empty( $table_rate_settings['min'] ) && 1 < $table_rate_settings['min'] ) {
+												$unset = true; //We need to unset this method, it's not usable in this cart
+											} else if ( !empty( $table_rate_settings['max'] ) && 1 > $table_rate_settings['max'] ) {
+												$unset = true; //We need to unset this method, it's not usable in this cart
+											} 
+											break;
 										
-									case 'item_count':
-										if ( !empty( $table_rate_settings['min'] ) && $item_count < $table_rate_settings['min'] ) {
-											$unset = true; //We need to unset this method, it's not usable in this cart
-										} else if ( !empty( $table_rate_settings['max'] ) && $item_count > $table_rate_settings['max'] ) {
-											$unset = true; //We need to unset this method, it's not usable in this cart
-										} 
-										break;
-				
-									case 'product_count': //there is only 1 product in the cart for this call
-										if ( !empty( $table_rate_settings['min'] ) && 1 < $table_rate_settings['min'] ) {
-											$unset = true; //We need to unset this method, it's not usable in this cart
-										} else if ( !empty( $table_rate_settings['max'] ) && 1 > $table_rate_settings['max'] ) {
-											$unset = true; //We need to unset this method, it's not usable in this cart
-										} 
-										break;
-									
-									case 'price':
-									default:
-										if ( !empty( $table_rate_settings['min'] ) && $product_total < it_exchange_convert_from_database_number( $table_rate_settings['min'] ) ) {
-											$unset = true; //We need to unset this method, it's not usable in this cart
-										} else if ( !empty( $table_rate_settings['max'] ) && $product_total >  it_exchange_convert_from_database_number( $table_rate_settings['max'] ) ) {
-											$unset = true; //We need to unset this method, it's not usable in this cart
-										} 
-										break;
-								}
+										case 'price':
+										default:
+											if ( !empty( $table_rate_settings['min'] ) && $product_total < it_exchange_convert_from_database_number( $table_rate_settings['min'] ) ) {
+												$unset = true; //We need to unset this method, it's not usable in this cart
+											} else if ( !empty( $table_rate_settings['max'] ) && $product_total >  it_exchange_convert_from_database_number( $table_rate_settings['max'] ) ) {
+												$unset = true; //We need to unset this method, it's not usable in this cart
+											} 
+											break;
+									}
+								}	
 							}
 							
 							if ( $unset ) {
