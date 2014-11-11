@@ -222,8 +222,8 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 	
 		if ( !empty( $shipping_methods ) ) {
 			$shipping_address = it_exchange_get_cart_shipping_address();
-			$cart_total_item_count = it_exchange_get_cart_products_count( true );
-			$cart_product_count = it_exchange_get_cart_products_count( false );	
+			$cart_total_item_count = it_exchange_get_cart_products_count( true, 'shipping' );
+			$cart_product_count = it_exchange_get_cart_products_count( false, 'shipping' );	
 			$cart_weight = it_exchange_get_cart_weight();
 			$cart_total = it_exchange_get_cart_subtotal( false );
 			
@@ -340,8 +340,8 @@ function it_exchange_table_rate_shipping_get_cart_shipping_cost( $cart_cost, $sh
 		// Make sure we have a class index and it corresponds to a defined class
 		if ( !empty( $class ) && class_exists( $class ) && 'IT_Exchange_Table_Rate_Shipping_Method' === $class ) {
 			$shipping_address = it_exchange_get_cart_shipping_address();
-			$cart_total_item_count = it_exchange_get_cart_products_count( true );
-			$cart_product_count = it_exchange_get_cart_products_count( false );
+			$cart_total_item_count = it_exchange_get_cart_products_count( true, 'shipping' );
+			$cart_product_count = it_exchange_get_cart_products_count( false, 'shipping' );
 			$cart_weight = it_exchange_get_cart_weight();
 			$cart_total = it_exchange_get_cart_subtotal( false );
 			
