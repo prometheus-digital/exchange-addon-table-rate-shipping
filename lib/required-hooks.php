@@ -254,7 +254,7 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 										break;
 									} else if ( $shipping_address['state'] === $state ){
 										$zipcodes = get_post_meta( $zone_id, '_it_exchange_etrs_zipcode_zone', true );
-										if( empty( $zipcodes ) || ( '*' === $zipkey = key( $zipcodes ) ) || in_array( $shipping_address['zip'], $zipcodes[$zipkey] ) ) {
+										if( empty( $zipcodes ) || ( '*' === $zip_key = key( $zipcodes ) ) || in_array( $shipping_address['zip'], $zipcodes[$zip_key] ) ) {
 											$unset = false; //Country and State match, and Postal Code is a wildcard or a match, so we can skip and break 
 											break;
 										}			
@@ -308,12 +308,9 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 					} else {
 						unset( $shipping_methods['default-table-rate-shipping-method'] ); //We have a matching rate, so we can unset the default rate
 					}
-					
 				}
-							
 			}
 		}
-				
 	}
 
 	return $shipping_methods;
@@ -427,7 +424,7 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 													break;
 												} else if ( $shipping_address['state'] === $state ){
 													$zipcodes = get_post_meta( $zone_id, '_it_exchange_etrs_zipcode_zone', true );
-													if( empty( $zipcodes ) || ( '*' === $zipkey = key( $zipcodes ) ) || in_array( $shipping_address['zip'], $zipcodes[$zipkey] ) ) {
+													if( empty( $zipcodes ) || ( '*' === $zip_key = key( $zipcodes ) ) || in_array( $shipping_address['zip'], $zipcodes[$zip_key] ) ) {
 														$unset = false; //Country and State match, and Postal Code is a wildcard or a match, so we can skip and break 
 														break;
 													}			
