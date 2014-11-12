@@ -166,115 +166,130 @@ add_action( 'wp_ajax_it-exchange-table-rate-shipping-get-states', 'it_exchange_t
 function it_exchange_table_rate_shipping_addon_ajax_add_zones() {
 	
 	$errors = array();
-	
-	if ( !empty( $_REQUEST['etrs-zone'] ) && !empty( $_REQUEST['rate-id'] ) ) {
+		
+	if ( !empty( $_REQUEST['rate-id'] ) ) {
 		
 		if ( is_numeric( $_REQUEST['rate-id'] ) ) {
-		
-			$zones = (array)get_post_meta( $_REQUEST['rate-id'], '_ite_etrs_rate_zones', true );
-			$saved_zones = array();
+	
+			if ( !empty( $_REQUEST['etrs-zone'] ) ) {
 						
-			foreach( $_REQUEST['etrs-zone'] as $key => $zone ) {
-				
-				if ( false !== strpos( $key, 'temp-' ) ) {
-					//Need to create a new zone (post type), then add the zone taxonomies
-					$zone_id = substr( $key, 5 );
+				$zones = (array)get_post_meta( $_REQUEST['rate-id'], '_ite_etrs_rate_zones', true );
+				$saved_zones = array();
+							
+				foreach( $_REQUEST['etrs-zone'] as $key => $zone ) {
 					
-					$post = array(
-						'post_title'     => $_REQUEST['rate-id'] . '-zone-' . $zone_id,
-				        'post_status'    => 'publish',
-					    'ping_status'    => 'closed',
-					    'comment_status' => 'closed',
-						'post_type'      => 'ite_etrs_zone',
-					);
-					$table_rate_zone_id = wp_insert_post( $post, true );
-					
-					if ( is_wp_error( $table_rate_zone_id ) ) {
-						$errors[] = $table_rate_zone_id->get_error_messages();
+					if ( false !== strpos( $key, 'temp-' ) ) {
+						//Need to create a new zone (post type), then add the zone taxonomies
+						$zone_id = substr( $key, 5 );
+						
+						$post = array(
+							'post_title'     => $_REQUEST['rate-id'] . '-zone-' . $zone_id,
+					        'post_status'    => 'publish',
+						    'ping_status'    => 'closed',
+						    'comment_status' => 'closed',
+							'post_type'      => 'ite_etrs_zone',
+						);
+						$table_rate_zone_id = wp_insert_post( $post, true );
+						
+						if ( is_wp_error( $table_rate_zone_id ) ) {
+							$errors[] = $table_rate_zone_id->get_error_messages();
+						} else {
+							$saved_zones[] = $table_rate_zone_id; //add it to our internal array
+							if ( empty( $zone['country'] ) ) {
+								$zone['country'] = '*';
+							}
+							update_post_meta( $table_rate_zone_id, '_it_exchange_etrs_country_zone', $zone['country'] );
+							
+							if ( empty( $zone['state'] ) ) {
+								$zone['state'] = '*';
+							}
+							update_post_meta( $table_rate_zone_id, '_it_exchange_etrs_state_zone', $zone['state'] );
+	
+							it_exchange_table_rate_shipping_addon_setup_zipcode_meta( $table_rate_zone_id, $zone['zipcode'] );
+						}
+						
 					} else {
-						$saved_zones[] = $table_rate_zone_id; //add it to our internal array
-						if ( empty( $zone['country'] ) ) {
-							$zone['country'] = '*';
+						//Need to verify existing zone (post type)
+						$table_rate_zone = get_post( $key );
+						if ( !empty( $table_rate_zone ) ) {
+							$saved_zones[] = $table_rate_zone->ID;
+	
+							if ( empty( $zone['country'] ) ) {
+								$zone['country'] = '*';
+							}
+							update_post_meta( $table_rate_zone->ID, '_it_exchange_etrs_country_zone', $zone['country'] );
+							
+							if ( empty( $zone['state'] ) ) {
+								$zone['state'] = '*';
+							}
+							update_post_meta( $table_rate_zone->ID, '_it_exchange_etrs_state_zone', $zone['state'] );
+	
+							//Do we need to update the postal code(s) for this zone?
+							if ( empty( $zone['zipcode'] ) ) {
+								$zone['zipcode'] = '*';
+							}
+							
+							$zipcodes = get_post_meta( $table_rate_zone->ID, '_it_exchange_etrs_zipcode_zone', true );
+							$zipcode = key( (array)$zipcodes );
+							//We only want to go through this if the zipcodes have change, save some processing
+							if ( $zone['zipcode'] !== $zipcode ) {
+								it_exchange_table_rate_shipping_addon_setup_zipcode_meta( $table_rate_zone->ID, $zone['zipcode'] );
+							}
+							
+						} else {
+							
+							$errors[] = __( 'Something went wrong, the table rate zone could not be found', 'LION' );
+							
 						}
-						update_post_meta( $table_rate_zone_id, '_it_exchange_etrs_country_zone', $zone['country'] );
 						
-						if ( empty( $zone['state'] ) ) {
-							$zone['state'] = '*';
-						}
-						update_post_meta( $table_rate_zone_id, '_it_exchange_etrs_state_zone', $zone['state'] );
-
-						it_exchange_table_rate_shipping_addon_setup_zipcode_meta( $table_rate_zone_id, $zone['zipcode'] );
 					}
 					
+				}
+				
+				if ( empty( $errors ) ) {
+					//Update zones array for this table rate ID
+					update_post_meta( $_REQUEST['rate-id'], '_ite_etrs_rate_zones', $saved_zones );
+					
+					if ( array_diff( $zones, $saved_zones ) || array_diff( $saved_zones, $zones ) ) {
+						foreach( $zones as $zone ) {
+							if ( !in_array( $zone, $saved_zones ) ) {
+								//We removed some zones, now we need to delete them.
+								wp_delete_post( $zone, true ); //permanently!
+							}
+						}
+					}
+	
+					wp_send_json_success( array( 'zone_output' => it_exchange_table_rate_shipping_prepare_zone_ouput( $saved_zones, $_REQUEST['rate-id'] ) ) );
+		
 				} else {
-					//Need to verify existing zone (post type)
-					$table_rate_zone = get_post( $key );
-					if ( !empty( $table_rate_zone ) ) {
-						$saved_zones[] = $table_rate_zone->ID;
-
-						if ( empty( $zone['country'] ) ) {
-							$zone['country'] = '*';
-						}
-						update_post_meta( $table_rate_zone->ID, '_it_exchange_etrs_country_zone', $zone['country'] );
-						
-						if ( empty( $zone['state'] ) ) {
-							$zone['state'] = '*';
-						}
-						update_post_meta( $table_rate_zone->ID, '_it_exchange_etrs_state_zone', $zone['state'] );
-
-						//Do we need to update the postal code(s) for this zone?
-						if ( empty( $zone['zipcode'] ) ) {
-							$zone['zipcode'] = '*';
-						}
-						
-						$zipcodes = get_post_meta( $table_rate_zone->ID, '_it_exchange_etrs_zipcode_zone', true );
-						$zipcode = key( (array)$zipcodes );
-						//We only want to go through this if the zipcodes have change, save some processing
-						if ( $zone['zipcode'] !== $zipcode ) {
-							it_exchange_table_rate_shipping_addon_setup_zipcode_meta( $table_rate_zone->ID, $zone['zipcode'] );
-						}
-						
-					} else {
-						
-						$errors[] = __( 'Something went wrong, the table rate zone could not be found', 'LION' );
-						
-					}
-					
-				}
-				
-			}
 			
-			if ( empty( $errors ) ) {
-				//Update zones array for this table rate ID
-				update_post_meta( $_REQUEST['rate-id'], '_ite_etrs_rate_zones', $saved_zones );
+					wp_send_json_error( $errors );
 				
-				if ( array_diff( $zones, $saved_zones ) || array_diff( $saved_zones, $zones ) ) {
-					foreach( $zones as $zone ) {
-						if ( !in_array( $zone, $saved_zones ) ) {
-							//We removed some zones, now we need to delete them.
-							wp_delete_post( $zone, true ); //permanently!
-						}
-					}
 				}
-	
-				wp_send_json_success( array( 'zone_output' => it_exchange_table_rate_shipping_prepare_zone_ouput( $saved_zones, $_REQUEST['rate-id'] ) ) );
-	
+				
 			} else {
-		
-				wp_send_json_error( $errors );
-			
+				//Empty zones, remove them all
+				$zones = (array)get_post_meta( $_REQUEST['rate-id'], '_ite_etrs_rate_zones', true );
+				foreach( $zones as $zone ) {
+					//We removed some zones, now we need to delete them.
+					wp_delete_post( $zone, true ); //permanently!
+				}
+				delete_post_meta( $_REQUEST['rate-id'], '_ite_etrs_rate_zones' );
+
+				wp_send_json_success( array( 'zone_output' => it_exchange_table_rate_shipping_prepare_zone_ouput( false, $_REQUEST['rate-id'] ) ) );
+
 			}
 			
 		} else {
-		
-			wp_send_json_error( __( 'Invalide Data', 'LION' ) );
 			
+			wp_send_json_error( __( 'Invalid Data', 'LION' ) );
+						
 		}
-		
+	
 	} else {
-		
+			
 		wp_send_json_error( __( 'Missing Data', 'LION' ) );
-					
+	
 	}
 	
 }
