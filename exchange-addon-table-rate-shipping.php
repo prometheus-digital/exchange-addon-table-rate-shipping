@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: iThemes Exchange - Table Rate Shipping
- * Version: 1.0.6
+ * Version: 0.0.1 
  * Description: Adds Table Rate Shipping to iThemes Exchange.
  * Plugin URI: http://ithemes.com/exchange/table-rate-shipping/
  * Author: iThemes
