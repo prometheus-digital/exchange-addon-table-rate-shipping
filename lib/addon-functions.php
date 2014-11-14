@@ -295,13 +295,19 @@ function it_exchange_table_rate_shipping_addon_setup_zipcode_meta( $table_rate_z
 			}
 		}
 	}
+	
 	$zipcode = strtoupper( $zipcode );
 	//Now we can try saving in post meta.
 	if ( isset( $min ) && isset( $max ) ) { //range or wildcards
 		$zipcodes = it_exchange_get_all_possible_zipcodes_in_range( $min, $max );
-		update_post_meta( $table_rate_zone_id, '_it_exchange_etrs_zipcode_zone', array( $zipcode => $zipcodes ) );
+		update_post_meta( $table_rate_zone_id, '_it_exchange_etrs_zipcode_zone', array( $zipcode => $zipcodes ) );		
 	} else if ( !empty( $zipcode ) ) { // all zipcodes or single zipcode
-		update_post_meta( $table_rate_zone_id, '_it_exchange_etrs_zipcode_zone', array( $zipcode => array( $zipcode ) ) );
+		if ( false !== ( $post = strpos( $zipcode, ',' ) ) ) {
+			$zipcodes = array_map( 'trim', explode( ',', $zipcode ) );
+			update_post_meta( $table_rate_zone_id, '_it_exchange_etrs_zipcode_zone', array( $zipcode => $zipcodes ) );
+		} else {
+			update_post_meta( $table_rate_zone_id, '_it_exchange_etrs_zipcode_zone', array( $zipcode => array( $zipcode ) ) );
+		}
 	} else { // We shouldn't reach this, but just in case, set it as all zipcodes
 		update_post_meta( $table_rate_zone_id, '_it_exchange_etrs_zipcode_zone', array( '*' => '*' ) ); //All the zipcodes
 	}
