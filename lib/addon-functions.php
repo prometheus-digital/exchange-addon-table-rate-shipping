@@ -165,8 +165,10 @@ function it_exchange_table_rate_shipping_prepare_zone_ouput( $zones=false, $tabl
 			
 			$state = get_post_meta( $zone_id, '_it_exchange_etrs_state_zone', true );
 			$states = it_exchange_get_data_set( 'states', array( 'country' => $country ) );
-			if( empty( $state ) || is_wp_error( $state ) || empty( $states[$state] ) ){
+			if ( empty( $state ) || is_wp_error( $state ) || empty( $states[$state] ) ){
 				$state_str = __( 'All States', 'LION' );
+			if ( 'US' === $country && '_USC_' === $states[$state] ) {
+				$state_str = __( 'Contiguous States', 'LION' );
 			} else {
 				$state_str = $states[$state];
 			}

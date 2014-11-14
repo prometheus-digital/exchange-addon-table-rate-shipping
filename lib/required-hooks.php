@@ -269,14 +269,22 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 												//we'll set $unset to false and break out of this loop.
 								
 								$country = get_post_meta( $zone_id, '_it_exchange_etrs_country_zone', true );
-								if ( empty( $country ) || '*' == $country ) {
+								if ( empty( $country ) || '*' === $country ) {
 									$unset = false; 	//Country is the highest level zone, if it's All, then it has to be all States/Postal Codes, 
 									break;			//so we don't skip this zone.
 								} else if ( $shipping_address['country'] === $country ) {
 									$state = get_post_meta( $zone_id, '_it_exchange_etrs_state_zone', true );
-									if( empty( $state ) || '*' == $state ) {
+									if( empty( $state ) || '*' === $state ) {
 										$unset = false; 	//Country matches and State is a wildcard, so we can skip and break 
 										break;
+									} else if ( 'USCONTIGUOUS' === $state ) {
+										$contiguous_states = it_exchange_get_data_set( 'states', array( 'country' => $country ) );
+										unset( $contiguous_states['AK'] ); //Alaska is not contiguous
+										unset( $contiguous_states['HI'] ); //Hawaii is not contiguous
+										if ( in_array( $shipping_address['state'], $contiguous_states ) ) {
+											$unset = false; //Country and State is a semi-wildcard, so we can skip and break 
+											break;
+										}
 									} else if ( $shipping_address['state'] === $state ){
 										$zipcodes = get_post_meta( $zone_id, '_it_exchange_etrs_zipcode_zone', true );
 										if( empty( $zipcodes ) || ( '*' === $zip_key = key( $zipcodes ) ) || in_array( $shipping_address['zip'], $zipcodes[$zip_key] ) ) {
@@ -447,6 +455,14 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 												if( empty( $state ) || '*' == $state ) {
 													$unset = false; 	//Country matches and State is a wildcard, so we can skip and break 
 													break;
+												} else if ( 'USCONTIGUOUS' === $state ) {
+													$contiguous_states = it_exchange_get_data_set( 'states', array( 'country' => $country ) );
+													unset( $contiguous_states['AK'] ); //Alaska is not contiguous
+													unset( $contiguous_states['HI'] ); //Hawaii is not contiguous
+													if ( in_array( $shipping_address['state'], $contiguous_states ) ) {
+														$unset = false; //Country and State is a semi-wildcard, so we can skip and break 
+														break;
+													}
 												} else if ( $shipping_address['state'] === $state ){
 													$zipcodes = get_post_meta( $zone_id, '_it_exchange_etrs_zipcode_zone', true );
 													if( empty( $zipcodes ) || ( '*' === $zip_key = key( $zipcodes ) ) || in_array( $shipping_address['zip'], $zipcodes[$zip_key] ) ) {

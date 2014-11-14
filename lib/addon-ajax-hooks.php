@@ -103,6 +103,9 @@ function it_exchange_table_rate_shipping_addon_ajax_format_zone() {
 		if ( !empty( $states ) ) {
 			$output .= '<select id="it-exchange-etrs-zone-state" name="etrs-zone[' . $zone_id . '][state]">';
 			$output .= '<option value="*" ' . selected( '*', $state, false ) . '>' . __( 'All States', 'LION' ) . '</option>';
+			if ( 'US' === $country ) {
+				$output .= '<option value="USCONTIGUOUS" ' . selected( 'USCONTIGUOUS', $state, false ) . '>' . __( 'Contiguous States', 'LION' ) . '</option>';
+			}
 			foreach( $states as $abbr => $name ) {
 				$output .= '<option value="' . $abbr . '" ' . selected( $abbr, $state, false ) . '>' . $name . '</option>';
 			}
