@@ -145,6 +145,9 @@ function it_exchange_table_rate_shipping_addon_ajax_get_states() {
 		if ( !empty( $states ) ) {
 			$output .= '<select id="it-exchange-etrs-zone-state" name="etrs-zone[' . $_REQUEST['ZoneID'] . '][state]">';
 			$output .= '<option value="*">' . __( 'All States', 'LION' ) . '</option>';
+			if ( 'US' === $_REQUEST['Country'] ) {
+				$output .= '<option value="USCONTIGUOUS">' . __( 'Contiguous States', 'LION' ) . '</option>';
+			}
 			foreach( $states as $abbr => $name ) {
 				$output .= '<option value="' . $abbr . '">' . $name . '</option>';
 			}
