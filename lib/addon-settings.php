@@ -50,6 +50,15 @@ function it_exchange_table_rate_shipping_print_shipping_tab() {
 		'action'  => 'admin.php?page=it-exchange-settings&tab=shipping&provider=table-rate-shipping',
 	);
 	$form         = new ITForm( $form_values, array( 'prefix' => 'it-exchange-add-on-table-rate-shipping' ) );
+	
+	if ( !empty( $form_values['errors'] ) ) {
+		foreach( $form_values['errors'] as $error ) {
+			ITUtility::show_error_message( $error );
+		}
+	} else if ( !empty( $form_values['settings_saved'] ) ) {
+		ITUtility::show_status_message( __( 'Settings Saved.', 'LION' ) );
+	}
+	
 	?>
 	<div class="wrap">
 		<?php
@@ -307,15 +316,11 @@ function it_exchange_save_add_on_settings_table_rate_shipping( $form_values, $po
 		
 	if ( !empty( $errors ) ) {
 		
-		foreach( $errors as $error ) {
-			
-			ITUtility::show_error_message( $error );
-			
-		}
+		$form_values['error_messages'] = $errors;
 		
 	} else {
 		
-		ITUtility::show_status_message( __( 'Settings Saved.', 'LION' ) );
+		$form_values['settings_saved'] = true;
 		
 	}
 	

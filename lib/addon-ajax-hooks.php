@@ -268,6 +268,7 @@ function it_exchange_table_rate_shipping_addon_ajax_add_zones() {
 				}
 				
 			} else {
+				
 				//Empty zones, remove them all
 				$zones = (array)get_post_meta( $_REQUEST['rate-id'], '_ite_etrs_rate_zones', true );
 				foreach( $zones as $zone ) {
@@ -307,8 +308,16 @@ function it_exchange_table_rate_shipping_addon_ajax_save_rates() {
 	if ( ! empty( $_POST ) && is_admin() ) {
 		$form_values = apply_filters( 'it_exchange_save_add_on_settings_table_rate_shipping', $form_values, $_POST );
 	}
-	
-	wp_send_json_success();
+
+	if ( !empty( $form_values['errors'] ) ) {
+		$messages = array();
+		foreach( $form_values['errors'] as $error ) {
+			$messages[] = ITUtility::show_error_message( $error );
+		}
+		wp_send_json_error( join( ',', $messages ) );
+	} else if ( !empty( $form_values['settings_saved'] ) ) {
+		wp_send_json_success();
+	}	
 	
 }
 add_action( 'wp_ajax_it-exchange-table-rate-shipping-save-rates', 'it_exchange_table_rate_shipping_addon_ajax_save_rates' );
