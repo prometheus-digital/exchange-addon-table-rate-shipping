@@ -281,7 +281,7 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 										$contiguous_states = it_exchange_get_data_set( 'states', array( 'country' => $country ) );
 										unset( $contiguous_states['AK'] ); //Alaska is not contiguous
 										unset( $contiguous_states['HI'] ); //Hawaii is not contiguous
-										if ( in_array( $shipping_address['state'], $contiguous_states ) ) {
+										if ( !empty( $contiguous_states[$shipping_address['state']] ) ) {
 											$unset = false; //Country and State is a semi-wildcard, so we can skip and break 
 											break;
 										}
@@ -459,7 +459,7 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 													$contiguous_states = it_exchange_get_data_set( 'states', array( 'country' => $country ) );
 													unset( $contiguous_states['AK'] ); //Alaska is not contiguous
 													unset( $contiguous_states['HI'] ); //Hawaii is not contiguous
-													if ( in_array( $shipping_address['state'], $contiguous_states ) ) {
+													if ( !empty( $contiguous_states[$shipping_address['state']] ) ) {
 														$unset = false; //Country and State is a semi-wildcard, so we can skip and break 
 														break;
 													}
