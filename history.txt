@@ -1,7 +1,9 @@
-0.0.3 - Lew Ayotte, Cody Smith
-	Adding Add-on Icon
+0.0.1 - Lew Ayotte, Elise Alley
+	Initial Release
 0.0.2 - Lew Ayotte, Elise Alley
 	Add ability to separate postal codes with coma for zones
 	Add Contiguous States to US State Options
-0.0.1 - Lew Ayotte, Elise Alley
-	Initial Release
+0.0.3 - Lew Ayotte, Cody Smith
+	Adding Add-on Icon
+0.0.4 - Chris Jean
+	Update to force membership system update.
