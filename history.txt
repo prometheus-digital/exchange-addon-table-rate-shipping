@@ -7,3 +7,6 @@
 	Adding Add-on Icon
 0.0.4 - Chris Jean
 	Update to force membership system update.
+0.0.5 - Lew Ayotte
+	Clean up JavaScript
+	Fix bug when setting Maximum Price condition to none
