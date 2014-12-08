@@ -10,3 +10,5 @@
 0.0.5 - Lew Ayotte
 	Clean up JavaScript
 	Fix bug when setting Maximum Price condition to none
+1.0.0 - Lew Ayotte
+	Tagging for Public Release
