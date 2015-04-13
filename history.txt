@@ -12,3 +12,5 @@
 	Fix bug when setting Maximum Price condition to none
 1.0.0 - Lew Ayotte
 	Tagging for Public Release
+1.0.1 - Lew Ayotte
+	Added filter to ensure shipping address requirement is enabled
