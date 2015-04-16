@@ -24,7 +24,7 @@ function it_exchange_table_rate_shipping_settings_callback() {
 		<?php ITUtility::screen_icon( 'it-exchange' ); ?>
 		<h2><?php _e( 'Table Rate Shipping', 'LION' ); ?></h2>
 		<?php
-		$url = add_query_arg( array( 'page' => 'it-exchange-settings', 'tab' => 'shipping', 'provider' => 'table-rate-shipping' ), esc_url( admin_url( 'admin.php' ) ) );
+		$url = esc_url( add_query_arg( array( 'page' => 'it-exchange-settings', 'tab' => 'shipping', 'provider' => 'table-rate-shipping' ), admin_url( 'admin.php' ) ) );
 		?><p><?php printf( __( 'Settings are located in the %sShipping tab%s on the Exchange Settings page.', 'LION' ), '<a href="' . $url . '">', '</a>' ); ?></p>
 	</div>
 	<?php
