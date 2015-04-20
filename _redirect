@@ -154,7 +154,7 @@ function it_exchange_table_rate_shipping_settings_redirect() {
 	$addon = ! empty( $_GET['add-on-settings'] ) && 'table-rate-shipping' == $_GET['add-on-settings'];
 
 	if ( $page && $addon ) {
-		wp_redirect( esc_url_raw( add_query_arg( array( 'page' => 'it-exchange-settings', 'tab' => 'shipping', 'provider' => 'table-rate-shipping' ), admin_url( 'admin.php' ) ) ) );
+		wp_redirect( esc_url( add_query_arg( array( 'page' => 'it-exchange-settings', 'tab' => 'shipping', 'provider' => 'table-rate-shipping' ), admin_url( 'admin.php' ) ) ) );
 		die();
 	}
 }
