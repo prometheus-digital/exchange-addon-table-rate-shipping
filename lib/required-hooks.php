@@ -583,3 +583,13 @@ function it_exchange_table_rate_shipping_get_shipping_method_cost_for_cart_item(
 	return $cost;
 }
 add_filter( 'it_exchange_get_shipping_method_cost_for_cart_item', 'it_exchange_table_rate_shipping_get_shipping_method_cost_for_cart_item', 10, 4 );
+
+function it_exchange_table_rate_shipping_replace_order_table_tag_before_total_row( $email_obj, $options ) {
+	?>
+	<tr>
+		<td colspan="2" style="padding: 10px;border:1px solid #DDD;"><?php _e( 'Shipping', 'LION' ); ?></td>
+		<td style="padding: 10px;border:1px solid #DDD;"><?php echo it_exchange_get_transaction_shipping_total( $email_obj->transaction_id, true ); ?></td>
+	</tr>
+	<?php
+}
+add_action( 'it_exchange_replace_order_table_tag_before_total_row', 'it_exchange_table_rate_shipping_replace_order_table_tag_before_total_row', 10, 2 );
