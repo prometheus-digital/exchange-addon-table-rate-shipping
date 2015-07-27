@@ -18,3 +18,5 @@
 	Multiple updates involving add_query_arg and remove_query_arg to esc_url()
 1.2.0 - Lew Ayotte
 	Added action to modify email notification order_table template
+1.2.1 - Lew AYotte
+	Removing unused file
