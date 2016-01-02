@@ -88,6 +88,9 @@ function it_exchange_table_rate_shipping_print_shipping_tab() {
  * Prints Table Rate Shipping settings table rate table (tongue twister)
  *
  * @since 1.0.0
+ *
+ * @param ITForm $form
+ * @param array  $settings
 */
 function it_exchange_table_rate_shipping_get_settings_form_table( $form, $settings = array() ) {
 	if ( !empty( $settings ) )
@@ -96,6 +99,10 @@ function it_exchange_table_rate_shipping_get_settings_form_table( $form, $settin
 	?>
 	
     <div class="it-exchange-addon-settings it-exchange-table-rate-shipping-addon-settings">
+
+	    <?php $form->add_check_box( 'exclude_non_shippable' );  ?>
+	    <label for="exclude_non_shippable"><?php _e( 'Exclude non-shippable products from per-order price calculations.', 'it-l10n-ithemes-exchange' ); ?></label>
+
         <h4>
         	<?php _e( 'Current Table Rates and Settings', 'LION' ) ?> 
         </h4>
@@ -311,7 +318,9 @@ function it_exchange_save_add_on_settings_table_rate_shipping( $form_values, $po
 		}
 		
 	}
-	
+
+	$form_values['exclude_non_shippable'] = ! empty( $post_request['it-exchange-add-on-table-rate-shipping-exclude_non_shippable'] );
+
 	it_exchange_save_option( 'addon_table_rate_shipping', $form_values );
 		
 	if ( !empty( $errors ) ) {
