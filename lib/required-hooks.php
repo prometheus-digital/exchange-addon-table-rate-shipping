@@ -250,7 +250,7 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 	
 		if ( !empty( $shipping_methods ) ) {
 
-			$settings = it_exchange_get_option( 'addon_table_rate_shipping' );
+			$general_settings = it_exchange_get_option( 'shipping-general' );
 
 			$shipping_address = it_exchange_get_cart_shipping_address();
 			$cart_total_item_count = it_exchange_get_cart_products_count( true, 'shipping' );
@@ -259,7 +259,7 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 
 			$cart_total_args = array();
 
-			if ( ! empty( $settings['exclude_non_shippable'] ) ) {
+			if ( ! empty( $general_settings['exclude_non_shippable'] ) ) {
 				$cart_total_args['feature'] = 'shipping';
 			}
 
