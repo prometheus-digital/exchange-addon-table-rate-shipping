@@ -20,3 +20,5 @@
 	Added action to modify email notification order_table template
 1.2.1 - Lew AYotte
 	Removing unused file
+1.2.2 – Timothy Jacobs
+	Fix: Introduce option for excluding non-physical products from shipping calcuations
