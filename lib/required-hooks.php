@@ -249,11 +249,21 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 	if ( $GLOBALS['it_exchange']['shipping']['only_return_methods_available_to_all_cart_products'] ) {
 	
 		if ( !empty( $shipping_methods ) ) {
+
+			$general_settings = it_exchange_get_option( 'shipping-general' );
+
 			$shipping_address = it_exchange_get_cart_shipping_address();
 			$cart_total_item_count = it_exchange_get_cart_products_count( true, 'shipping' );
 			$cart_product_count = it_exchange_get_cart_products_count( false, 'shipping' );	
 			$cart_weight = it_exchange_get_cart_weight();
-			$cart_total = it_exchange_get_cart_subtotal( false );
+
+			$cart_total_args = array();
+
+			if ( ! empty( $general_settings['exclude_non_shippable'] ) ) {
+				$cart_total_args['feature'] = 'shipping';
+			}
+
+			$cart_total = it_exchange_get_cart_subtotal( false, $cart_total_args );
 			
 			foreach ( $shipping_methods as $key => $shipping_method ) {
 				if ( 'IT_Exchange_Table_Rate_Shipping_Method' === get_class( $shipping_method ) ) {

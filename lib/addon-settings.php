@@ -88,6 +88,9 @@ function it_exchange_table_rate_shipping_print_shipping_tab() {
  * Prints Table Rate Shipping settings table rate table (tongue twister)
  *
  * @since 1.0.0
+ *
+ * @param ITForm $form
+ * @param array  $settings
 */
 function it_exchange_table_rate_shipping_get_settings_form_table( $form, $settings = array() ) {
 	if ( !empty( $settings ) )
@@ -96,6 +99,7 @@ function it_exchange_table_rate_shipping_get_settings_form_table( $form, $settin
 	?>
 	
     <div class="it-exchange-addon-settings it-exchange-table-rate-shipping-addon-settings">
+
         <h4>
         	<?php _e( 'Current Table Rates and Settings', 'LION' ) ?> 
         </h4>
@@ -311,7 +315,7 @@ function it_exchange_save_add_on_settings_table_rate_shipping( $form_values, $po
 		}
 		
 	}
-	
+
 	it_exchange_save_option( 'addon_table_rate_shipping', $form_values );
 		
 	if ( !empty( $errors ) ) {
