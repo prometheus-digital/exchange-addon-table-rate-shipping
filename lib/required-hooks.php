@@ -6,7 +6,6 @@
 */
 
 //Just to be absolutely sure that the shipping address requirement is enabled.
-add_filter( 'it_exchange_shipping_address_purchase_requirement_enabled', '__return_true' );
 
 /**
  * Shows the nag when needed.
