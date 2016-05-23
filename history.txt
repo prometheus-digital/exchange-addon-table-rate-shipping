@@ -22,3 +22,5 @@
 	Removing unused file
 1.2.2 – Timothy Jacobs
 	Fix: Introduce option for excluding non-physical products from shipping calcuations
+1.2.3 - Timothy Jacobs
+	Tweak: Only collect shipping address when necessary.
