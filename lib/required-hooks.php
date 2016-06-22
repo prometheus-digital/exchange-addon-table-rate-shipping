@@ -426,10 +426,10 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 				
 				$item_count = it_exchange_get_cart_product_quantity_by_product_id( $product->ID );
 				
-		        $pm = get_post_meta( $product->ID, '_it_exchange_core_weight_dimensions', true );
+		        $pm = get_post_meta( $product->ID, '_it_exchange_core_weight', true );
 		        $weight = empty( $pm['weight'] ) ? 0 : $pm['weight'];
 				$product_weight = $weight * $item_count;
-				
+
 				$product_total = it_exchange_get_cart_product_base_price( array( 'product_id' => $product->ID ), false ) * $item_count;
 				$product_overriding_default_methods = it_exchange_get_shipping_feature_for_product( 'core-available-shipping-methods', $product->ID );
 	
@@ -558,7 +558,7 @@ function it_exchange_table_rate_shipping_get_shipping_method_cost_for_cart_item(
 
 			$item_count = it_exchange_get_cart_product_quantity_by_product_id( $cart_product['product_id'] );
 			
-            $pm = get_post_meta( $cart_product['product_id'], '_it_exchange_core_weight_dimensions', true );
+            $pm = get_post_meta( $cart_product['product_id'], '_it_exchange_core_weight', true );
             $weight = empty( $pm['weight'] ) ? 0 : $pm['weight'];
 			$product_weight = $weight * $item_count;
 			
