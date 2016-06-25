@@ -578,7 +578,7 @@ function it_exchange_table_rate_shipping_get_cart_shipping_cost( $cart_cost, $sh
 	return $format_price ? it_exchange_format_price( $cart_cost ) : $cart_cost;
 }
 
-add_filter( 'it_exchange_get_cart_shipping_cost', 'it_exchange_table_rate_shipping_get_cart_shipping_cost', 10, 4 );
+//add_filter( 'it_exchange_get_cart_shipping_cost', 'it_exchange_table_rate_shipping_get_cart_shipping_cost', 10, 4 );
 
 /**
  * Calculate the shipping cost for a particular cart item.
@@ -634,4 +634,4 @@ function it_exchange_table_rate_shipping_get_shipping_method_cost_for_cart_item(
 
 	return $format_price ? it_exchange_format_price( $cost ) : $cost;
 }
-add_filter( 'it_exchange_get_shipping_method_cost_for_cart_item', 'it_exchange_table_rate_shipping_get_shipping_method_cost_for_cart_item', 10, 4 );
+//add_filter( 'it_exchange_get_shipping_method_cost_for_cart_item', 'it_exchange_table_rate_shipping_get_shipping_method_cost_for_cart_item', 10, 4 );
