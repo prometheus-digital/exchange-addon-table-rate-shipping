@@ -7,6 +7,7 @@
  */
 class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method {
 
+	/** @var array */
 	private $table_rate_args;
 
 	/**
@@ -47,9 +48,7 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 	 *
 	 * @return void
 	 */
-	public function set_slug() {
-		$this->slug = $this->table_rate_args['slug'];
-	}
+	public function set_slug() { $this->slug = $this->table_rate_args['slug']; }
 
 	/**
 	 * Sets the label for this shipping method
@@ -58,9 +57,7 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 	 *
 	 * @return void
 	 */
-	public function set_label() {
-		$this->label = $this->table_rate_args['label'];
-	}
+	public function set_label() { $this->label = $this->table_rate_args['label']; }
 
 	/**
 	 * Sets the Shipping Features that this method uses.
@@ -95,9 +92,7 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 	 *
 	 * @return void
 	 */
-	public function set_availability() {
-		$this->available = $this->enabled;
-	}
+	public function set_availability() { $this->available = $this->enabled; }
 
 	/**
 	 * Define any setting fields that you want this method to include on the Provider settings page
@@ -106,16 +101,12 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 	 *
 	 * @return void
 	 */
-	public function set_settings() {
-
-	}
+	public function set_settings() { }
 
 	/**
 	 * @inheritdoc
 	 */
 	public function get_shipping_cost_for_product( $cart_product ) {
-
-		$item_count = it_exchange_get_cart_product_quantity_by_product_id( $cart_product['product_id'] );
 
 		if ( 'default-table-rate-shipping-method' === $this->slug ) {
 			$method_slug = 0;
@@ -129,20 +120,15 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 			return 0;
 		}
 
-		$handling      = it_exchange_convert_from_database_number( $table_rate_settings['handling-fee'] );
-		$base_cost     = it_exchange_convert_from_database_number( $table_rate_settings['base-cost'] );
+		$item_count    = it_exchange_get_cart_product_quantity_by_product_id( $cart_product['product_id'] );
 		$per_item_cost = it_exchange_convert_from_database_number( $table_rate_settings['item-cost'] );
 
 		switch ( $table_rate_settings['calculation-type'] ) {
 			case 'per_item':
 			case 'per_line':
-				$cost = ( $handling + $base_cost + $per_item_cost ) * $item_count;
-				break;
-
 			case 'per_order':
 			default:
-				$cost = $handling + $base_cost + ( $per_item_cost * $item_count );
-				$cost /= it_exchange_get_cart_products_count( false, 'shipping' );
+				$cost = $per_item_cost * $item_count;
 				break;
 		}
 
@@ -153,10 +139,6 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 	 * @inheritdoc
 	 */
 	public function get_additional_cost_for_cart( ITE_Cart $cart ) {
-
-		// Make sure we have a class index and it corresponds to a defined class
-		$cart_total_item_count = it_exchange_get_cart_products_count( true, 'shipping' );
-		$cart_product_count    = it_exchange_get_cart_products_count( false, 'shipping' );
 
 		if ( 'default-table-rate-shipping-method' === $this->slug ) {
 			$shipping_method = 0;
@@ -170,32 +152,27 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 			return 0;
 		}
 
-		$existing_cost = 0;
-
-		/** @var ITE_Shipping_Line_Item $shipping */
-		foreach ( $cart->get_items( 'shipping', true ) as $shipping ) {
-			if ( $shipping->get_method()->slug === $this->slug && $shipping->get_aggregate() ) {
-				$existing_cost += $shipping->get_amount() * $shipping->get_quantity();
-			}
-		}
+		$cart_total_item_count = it_exchange_get_cart_products_count( true, 'shipping' );
+		$cart_product_count    = it_exchange_get_cart_products_count( false, 'shipping' );
 
 		$handling      = it_exchange_convert_from_database_number( $table_rate_settings['handling-fee'] );
 		$base_cost     = it_exchange_convert_from_database_number( $table_rate_settings['base-cost'] );
 		$per_item_cost = it_exchange_convert_from_database_number( $table_rate_settings['item-cost'] );
 
 		switch ( $table_rate_settings['calculation-type'] ) {
+				/*$cart_cost = ( ( $handling + $base_cost ) * $cart_total_item_count );
+				break;
+
+				$cart_cost = ( ( $handling + $base_cost ) * $cart_product_count );
+				break;*/
 			case 'per_item':
-				return 0;
-
 			case 'per_line':
-				return 0;
-
 			case 'per_order':
 			default:
-				$cart_cost = $handling + $base_cost + ( $per_item_cost * $cart_total_item_count );
+				$cart_cost = $handling + $base_cost;
 				break;
 		}
 
-		return $cart_cost - $existing_cost;
+		return $cart_cost;
 	}
 }
