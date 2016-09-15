@@ -106,7 +106,7 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 	/**
 	 * @inheritdoc
 	 */
-	public function get_shipping_cost_for_product( $cart_product ) {
+	public function get_shipping_cost_for_product( $cart_product, ITE_Cart $cart = null ) {
 
 		if ( 'default-table-rate-shipping-method' === $this->slug ) {
 			$method_slug = 0;
@@ -120,7 +120,7 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 			return 0;
 		}
 
-		$item_count    = it_exchange_get_cart_product_quantity_by_product_id( $cart_product['product_id'] );
+		$item_count    = it_exchange_get_cart_product_quantity_by_product_id( $cart_product['product_id'], $cart );
 		$per_item_cost = it_exchange_convert_from_database_number( $table_rate_settings['item-cost'] );
 
 		switch ( $table_rate_settings['calculation-type'] ) {

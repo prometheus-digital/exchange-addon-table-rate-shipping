@@ -241,10 +241,12 @@ add_filter( 'it_exchange_super_widget_valid_states', 'it_exchange_table_rate_shi
  *
  * @since 1.0.0
  *
- * @param array $shipping_methods - Shipping Methods
+ * @param array    $shipping_methods - Shipping Methods
+ * @param ITE_Cart $cart
+ *
  * @return array $shipping_methods
 */
-function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart( $shipping_methods ) {
+function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart( $shipping_methods, ITE_Cart $cart = null ) {
 	
 	if ( ! $GLOBALS['it_exchange']['shipping']['only_return_methods_available_to_all_cart_products'] ) {
 		return $shipping_methods;
@@ -253,15 +255,19 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 	if ( count( $shipping_methods ) === 0 ) {
 		return $shipping_methods;
 	}
+
+	$cart = $cart ?: it_exchange_get_current_cart();
 	
 	$general_settings = it_exchange_get_option( 'shipping-general' );
 
-	$shipping_address = it_exchange_get_cart_shipping_address();
-	$cart_total_item_count = it_exchange_get_cart_products_count( true, 'shipping' );
-	$cart_product_count = it_exchange_get_cart_products_count( false, 'shipping' );	
-	$cart_weight = it_exchange_get_cart_weight();
+	$shipping_address      = $cart->get_shipping_address() ? $cart->get_shipping_address()->to_array() : array();
+	$cart_total_item_count = it_exchange_get_cart_products_count( true, 'shipping', $cart );
+	$cart_product_count    = it_exchange_get_cart_products_count( false, 'shipping', $cart );
+	$cart_weight           = it_exchange_get_cart_weight( $cart );
 
-	$cart_total_args = array();
+	$cart_total_args = array(
+		'cart' => $cart
+	);
 
 	if ( ! empty( $general_settings['exclude_non_shippable'] ) ) {
 		$cart_total_args['feature'] = 'shipping';
@@ -364,19 +370,20 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 
 	return $shipping_methods;
 }
-add_filter( 'it_exchange_get_available_shipping_methods_for_cart', 'it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart' );
+add_filter( 'it_exchange_get_available_shipping_methods_for_cart', 'it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart', 10, 2 );
 
 /**
  * Filter the available shipping methods for a given product.
  * 
  * @since 1.0.0
  * 
- * @param array $shipping_methods
- * @param array $product
+ * @param array               $shipping_methods
+ * @param IT_Exchange_Product $product
+ * @param ITE_Cart            $cart
  *
  * @return array
  */
-function it_exchange_table_rate_shipping_get_available_shipping_methods_for_product_provider_methods( $shipping_methods, $product ) {
+function it_exchange_table_rate_shipping_get_available_shipping_methods_for_product_provider_methods( $shipping_methods, $product, ITE_Cart $cart = null ) {
 
 	if ( ! $product || is_admin() ) {
 		return $shipping_methods;
@@ -386,13 +393,14 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 		return $shipping_methods;
 	}
 
-	if ( $shipping_methods ) {
+	if ( ! $shipping_methods ) {
 		return $shipping_methods;
 	}
 
-	$shipping_address = it_exchange_get_cart_shipping_address();
+	$cart = $cart ?: it_exchange_get_current_cart();
 
-	$item_count = it_exchange_get_cart_product_quantity_by_product_id( $product->ID );
+	$shipping_address = $cart->get_shipping_address() ?: array();
+	$item_count = it_exchange_get_cart_product_quantity_by_product_id( $product->ID, $cart );
 
     $pm             = get_post_meta( $product->ID, '_it_exchange_core_weight', true );
     $weight         = empty( $pm['weight'] ) ? 0 : $pm['weight'];
@@ -429,32 +437,36 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 
 				if ( !empty( $table_rate_settings['geo-restrictions'] ) ) {
 
-					foreach( $table_rate_settings['geo-restrictions'] as $zone_id ) {
-						$unset = true; 	//We're just going to assume that we'll hit a zone limit, but if we get a positive match
-										//we'll set $unset to false and break out of this loop.
+					if ( empty( $shipping_address ) ) {
+						$unset = true;
+					} else {
+						foreach ( $table_rate_settings['geo-restrictions'] as $zone_id ) {
+							$unset = true;    //We're just going to assume that we'll hit a zone limit, but if we get a positive match
+							//we'll set $unset to false and break out of this loop.
 
-						$country = get_post_meta( $zone_id, '_it_exchange_etrs_country_zone', true );
-						if ( '*' === $country || trim( $country ) === '' ) {
-							$unset = false; 	//Country is the highest level zone, if it's All, then it has to be all States/Postal Codes,
-							break;			//so we don't skip this zone.
-						} else if ( $shipping_address['country'] === $country ) {
-							$state = get_post_meta( $zone_id, '_it_exchange_etrs_state_zone', true );
+							$country = get_post_meta( $zone_id, '_it_exchange_etrs_country_zone', true );
+							if ( '*' === $country || trim( $country ) === '' ) {
+								$unset = false;    //Country is the highest level zone, if it's All, then it has to be all States/Postal Codes,
+								break;            //so we don't skip this zone.
+							} else if ( $shipping_address['country'] === $country ) {
+								$state = get_post_meta( $zone_id, '_it_exchange_etrs_state_zone', true );
 
-							if ( '*' === $state || trim( $state ) === '' ) {
-								$unset = false; 	//Country matches and State is a wildcard, so we can skip and break
-								break;
-							} else if ( 'USCONTIGUOUS' === $state ) {
-								$contiguous_states = it_exchange_get_data_set( 'states', array( 'country' => $country ) );
-								unset( $contiguous_states['AK'], $contiguous_states['HI'] ); //Alaska and Hawaii is not contiguous
-								if ( !empty( $contiguous_states[$shipping_address['state']] ) ) {
-									$unset = false; //Country and State is a semi-wildcard, so we can skip and break
+								if ( '*' === $state || trim( $state ) === '' ) {
+									$unset = false;    //Country matches and State is a wildcard, so we can skip and break
 									break;
-								}
-							} else if ( $shipping_address['state'] === $state ){
-								$zipcodes = get_post_meta( $zone_id, '_it_exchange_etrs_zipcode_zone', true );
-								if( ! is_array( $zipcodes ) || count( $zipcodes ) === 0 || ( '*' === $zip_key = key( $zipcodes ) ) || in_array( $shipping_address['zip'], $zipcodes[$zip_key] ) ) {
-									$unset = false; //Country and State match, and Postal Code is a wildcard or a match, so we can skip and break
-									break;
+								} else if ( 'USCONTIGUOUS' === $state ) {
+									$contiguous_states = it_exchange_get_data_set( 'states', array( 'country' => $country ) );
+									unset( $contiguous_states['AK'], $contiguous_states['HI'] ); //Alaska and Hawaii is not contiguous
+									if ( ! empty( $contiguous_states[ $shipping_address['state'] ] ) ) {
+										$unset = false; //Country and State is a semi-wildcard, so we can skip and break
+										break;
+									}
+								} else if ( $shipping_address['state'] === $state ) {
+									$zipcodes = get_post_meta( $zone_id, '_it_exchange_etrs_zipcode_zone', true );
+									if ( ! is_array( $zipcodes ) || count( $zipcodes ) === 0 || ( '*' === $zip_key = key( $zipcodes ) ) || in_array( $shipping_address['zip'], $zipcodes[ $zip_key ] ) ) {
+										$unset = false; //Country and State match, and Postal Code is a wildcard or a match, so we can skip and break
+										break;
+									}
 								}
 							}
 						}
@@ -511,12 +523,17 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 				unset( $shipping_methods[$key] ); //We need to unset this method, it's not usable in this cart
 			}
 		}
+	}
 
+	if ( count( $shipping_methods ) > 1 ) {
+		if ( false !== $key = array_search( 'default-table-rate-shipping-method', $shipping_methods ) ) {
+			unset( $shipping_methods[$key] ); //We need to unset this method, it's not usable in this cart
+		}
 	}
 
 	return $shipping_methods;
 }
-add_filter( 'it_exchange_get_available_shipping_methods_for_product_provider_methods', 'it_exchange_table_rate_shipping_get_available_shipping_methods_for_product_provider_methods', 10, 2 );
+add_filter( 'it_exchange_get_available_shipping_methods_for_product_provider_methods', 'it_exchange_table_rate_shipping_get_available_shipping_methods_for_product_provider_methods', 10, 3 );
 
 /**
  * This function parses the available shipping methods and removes any that don't match the criteria set by Table Rate Shipping.
@@ -531,6 +548,8 @@ add_filter( 'it_exchange_get_available_shipping_methods_for_product_provider_met
  * @return float
  */
 function it_exchange_table_rate_shipping_get_cart_shipping_cost( $cart_cost, $shipping_method, $cart_products, $format_price ) {
+	
+	_deprecated_function( __FUNCTION__, '1.3.0' );
 
 	if ( !  $shipping_method || empty( $GLOBALS['it_exchange']['shipping']['methods'][ $shipping_method ] ) ) {
 		return $cart_cost;
@@ -594,6 +613,8 @@ function it_exchange_table_rate_shipping_get_cart_shipping_cost( $cart_cost, $sh
  */
 function it_exchange_table_rate_shipping_get_shipping_method_cost_for_cart_item( $cost, $method_slug, $cart_product, $format_price ) {
 
+	_deprecated_function( __FUNCTION__, '1.3.0' );
+	
 	if ( ! $method_slug || empty( $GLOBALS['it_exchange']['shipping']['methods'][$method_slug] ) ) {
 		return $cost;
 	}
