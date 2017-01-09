@@ -539,6 +539,7 @@ add_filter( 'it_exchange_get_available_shipping_methods_for_product_provider_met
  * This function parses the available shipping methods and removes any that don't match the criteria set by Table Rate Shipping.
  *
  * @since 1.0.0
+ * @deprecated 2.0.0
  *
  * @param float  $cart_cost - Current cost of shipping
  * @param int    $shipping_method - Selected Shipping Method
@@ -549,7 +550,7 @@ add_filter( 'it_exchange_get_available_shipping_methods_for_product_provider_met
  */
 function it_exchange_table_rate_shipping_get_cart_shipping_cost( $cart_cost, $shipping_method, $cart_products, $format_price ) {
 	
-	_deprecated_function( __FUNCTION__, '1.3.0' );
+	_deprecated_function( __FUNCTION__, '2.0.0' );
 
 	if ( !  $shipping_method || empty( $GLOBALS['it_exchange']['shipping']['methods'][ $shipping_method ] ) ) {
 		return $cart_cost;
@@ -613,7 +614,7 @@ function it_exchange_table_rate_shipping_get_cart_shipping_cost( $cart_cost, $sh
  */
 function it_exchange_table_rate_shipping_get_shipping_method_cost_for_cart_item( $cost, $method_slug, $cart_product, $format_price ) {
 
-	_deprecated_function( __FUNCTION__, '1.3.0' );
+	_deprecated_function( __FUNCTION__, '2.0.0' );
 	
 	if ( ! $method_slug || empty( $GLOBALS['it_exchange']['shipping']['methods'][$method_slug] ) ) {
 		return $cost;
