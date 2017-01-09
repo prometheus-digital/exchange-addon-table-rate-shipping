@@ -43,4 +43,4 @@ function ithemes_exchange_addon_table_rate_shipping_updater_register( $updater )
 	$updater->register( 'exchange-addon-table-rate-shipping', __FILE__ );
 }
 add_action( 'ithemes_updater_register', 'ithemes_exchange_addon_table_rate_shipping_updater_register' );
-//require( dirname( __FILE__ ) . '/lib/updater/load.php' );
+require( dirname( __FILE__ ) . '/lib/updater/load.php' );
