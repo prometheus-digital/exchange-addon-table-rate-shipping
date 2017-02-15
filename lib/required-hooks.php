@@ -516,18 +516,18 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 
 		if ( $unset ) {
 			if ( false !== $key = array_search( $shipping_method, $shipping_methods ) ) {
-				unset( $shipping_methods[$key] ); //We need to unset this method, it's not usable in this cart
+				unset( $shipping_methods[$key] );
 			}
 		} else {
 			if ( false !== $key = array_search( 'default-table-rate-shipping-method', $shipping_methods ) ) {
-				unset( $shipping_methods[$key] ); //We need to unset this method, it's not usable in this cart
+				unset( $shipping_methods[$key] );
 			}
 		}
 	}
 
 	if ( count( $shipping_methods ) > 1 ) {
 		if ( false !== $key = array_search( 'default-table-rate-shipping-method', $shipping_methods ) ) {
-			unset( $shipping_methods[$key] ); //We need to unset this method, it's not usable in this cart
+			unset( $shipping_methods[$key] );
 		}
 	}
 

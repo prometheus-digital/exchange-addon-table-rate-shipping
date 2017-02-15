@@ -106,7 +106,7 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 	/**
 	 * @inheritdoc
 	 */
-	public function get_shipping_cost_for_product( $cart_product, ITE_Cart $cart = null ) {
+	public function get_shipping_cost_for_product( $cart_product, $cart = null ) {
 
 		if ( 'default-table-rate-shipping-method' === $this->slug ) {
 			$method_slug = 0;

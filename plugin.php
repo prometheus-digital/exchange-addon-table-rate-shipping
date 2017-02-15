@@ -44,4 +44,4 @@ function it_exchange_table_rate_shipping_set_textdomain() {
 	load_plugin_textdomain( 'LION', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 }
 
-add_action( 'plugins_loaded', 'it_exchange_table_rate_shipping_set_textdomain' );
+it_exchange_table_rate_shipping_set_textdomain();
