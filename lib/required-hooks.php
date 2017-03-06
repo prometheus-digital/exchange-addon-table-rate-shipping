@@ -406,7 +406,9 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
     $weight         = empty( $pm['weight'] ) ? 0 : $pm['weight'];
 	$product_weight = $weight * $item_count;
 
-	$product_total = it_exchange_get_cart_product_base_price( array( 'product_id' => $product->ID ), false ) * $item_count;
+	$item = ITE_Cart_Product::create( $product, $item_count );
+	$item->set_line_item_repository( $cart->get_repository() );
+	$product_total = $item->get_total();
 	$product_overriding_default_methods = it_exchange_get_shipping_feature_for_product( 'core-available-shipping-methods', $product->ID );
 
 	foreach ( $shipping_methods as $shipping_method ) {
@@ -533,7 +535,10 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 
 	return $shipping_methods;
 }
-add_filter( 'it_exchange_get_available_shipping_methods_for_product_provider_methods', 'it_exchange_table_rate_shipping_get_available_shipping_methods_for_product_provider_methods', 10, 3 );
+add_filter(
+    'it_exchange_get_available_shipping_methods_for_product_provider_methods',
+    'it_exchange_table_rate_shipping_get_available_shipping_methods_for_product_provider_methods', 10, 3
+);
 
 /**
  * This function parses the available shipping methods and removes any that don't match the criteria set by Table Rate Shipping.
