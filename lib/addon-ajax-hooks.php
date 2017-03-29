@@ -91,7 +91,10 @@ function it_exchange_table_rate_shipping_addon_ajax_format_zone() {
 		$output .= '<input type="hidden" class="it-exchange-etrs-zone-id" name="etrs-zone[' . $zone_id . '][zone_id]" value="' . $zone_id .'" />';
 		$output .= '<select id="it-exchange-etrs-zone-country" name="etrs-zone[' . $zone_id . '][country]">';
 		$output .= '<option value="*" ' . selected( '*', $country, false ) . '>' . __( 'All Countries', 'LION' ) . '</option>';
-		$countries = it_exchange_get_data_set( 'countries' );
+
+		$countries       = it_exchange_get_data_set( 'countries' );
+		$countries['EU'] = __( 'European Union', 'LION' );
+
 		foreach( $countries as $abbr => $name ) {
 			$output .= '<option value="' . $abbr . '" ' . selected( $abbr, $country, false ) . '>' . $name . '</option>';
 		}
@@ -100,7 +103,10 @@ function it_exchange_table_rate_shipping_addon_ajax_format_zone() {
 		
 		$output .= '<div class="item-column block-column block-column-2 it-exchange-etrs-zone-state-column">';
 		$states = it_exchange_get_data_set( 'states', array( 'country' => $country ) );
-		if ( !empty( $states ) ) {
+
+		if ( $country === 'EU' ) {
+			$output .= '<span class="it-exchange-etrs-na-states">N/A</span>';
+		} elseif ( !empty( $states ) ) {
 			$output .= '<select id="it-exchange-etrs-zone-state" name="etrs-zone[' . $zone_id . '][state]">';
 			$output .= '<option value="*" ' . selected( '*', $state, false ) . '>' . __( 'All States', 'LION' ) . '</option>';
 			if ( 'US' === $country ) {
@@ -142,7 +148,10 @@ function it_exchange_table_rate_shipping_addon_ajax_get_states() {
 	
 	if ( !empty( $_REQUEST['ZoneID'] ) && !empty( $_REQUEST['Country'] ) ) {	
 		$states = it_exchange_get_data_set( 'states', array( 'country' => $_REQUEST['Country'] ) );
-		if ( !empty( $states ) ) {
+
+		if ( $_REQUEST['Country'] === 'EU' ) {
+			$output .= '<span class="it-exchange-etrs-na-states">N/A</span>';
+		} elseif ( !empty( $states ) ) {
 			$output .= '<select id="it-exchange-etrs-zone-state" name="etrs-zone[' . $_REQUEST['ZoneID'] . '][state]">';
 			$output .= '<option value="*">' . __( 'All States', 'LION' ) . '</option>';
 			if ( 'US' === $_REQUEST['Country'] ) {

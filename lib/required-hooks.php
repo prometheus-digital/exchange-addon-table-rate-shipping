@@ -259,6 +259,7 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 	$cart = $cart ?: it_exchange_get_current_cart();
 	
 	$general_settings = it_exchange_get_option( 'shipping-general' );
+	$eu_countries     = it_exchange_get_data_set( 'states', array( 'country' => 'EU' ) );
 
 	$shipping_address      = $cart->get_shipping_address() ? $cart->get_shipping_address()->to_array() : array();
 	$cart_total_item_count = it_exchange_get_cart_products_count( true, 'shipping', $cart );
@@ -298,7 +299,7 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 					if ( '*' === $country || trim( $country ) === '' ) {
 						$unset = false; 	//Country is the highest level zone, if it's All, then it has to be all States/Postal Codes, 
 						break;			//so we don't skip this zone.
-					} else if ( $shipping_address['country'] === $country ) {
+					} else if ( ( $country === 'EU' && isset( $eu_countries[ $shipping_address['country'] ] ) ) || $shipping_address['country'] === $country ) {
 						$state = get_post_meta( $zone_id, '_it_exchange_etrs_state_zone', true );
 						if( '*' === $state || trim ( $state ) === '' ) {
 							$unset = false; 	//Country matches and State is a wildcard, so we can skip and break 
@@ -402,6 +403,8 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 	$shipping_address = $cart->get_shipping_address() ?: array();
 	$item_count = it_exchange_get_cart_product_quantity_by_product_id( $product->ID, $cart );
 
+	$eu_countries = it_exchange_get_data_set( 'states', array( 'country' => 'EU' ) );
+
     $pm             = get_post_meta( $product->ID, '_it_exchange_core_weight', true );
     $weight         = empty( $pm['weight'] ) ? 0 : $pm['weight'];
 	$product_weight = $weight * $item_count;
@@ -450,7 +453,7 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 							if ( '*' === $country || trim( $country ) === '' ) {
 								$unset = false;    //Country is the highest level zone, if it's All, then it has to be all States/Postal Codes,
 								break;            //so we don't skip this zone.
-							} else if ( $shipping_address['country'] === $country ) {
+							} else if ( ( $country === 'EU' && isset( $eu_countries[ $shipping_address['country'] ] ) ) || $shipping_address['country'] === $country ) {
 								$state = get_post_meta( $zone_id, '_it_exchange_etrs_state_zone', true );
 
 								if ( '*' === $state || trim( $state ) === '' ) {
