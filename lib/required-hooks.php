@@ -410,7 +410,7 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 	$product_weight = $weight * $item_count;
 
 	$item = ITE_Cart_Product::create( $product, $item_count );
-	$item->set_line_item_repository( $cart->get_repository() );
+	$item->set_cart_repository( $cart->get_repository() );
 	$product_total = $item->get_total();
 	$product_overriding_default_methods = it_exchange_get_shipping_feature_for_product( 'core-available-shipping-methods', $product->ID );
 
