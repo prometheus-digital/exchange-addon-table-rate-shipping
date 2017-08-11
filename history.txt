@@ -24,3 +24,5 @@
 	Fix: Introduce option for excluding non-physical products from shipping calcuations
 1.2.3 - Timothy Jacobs
 	Tweak: Only collect shipping address when necessary.
+1.2.4 - AJ Morris
+	Rebrand and new license system in place.

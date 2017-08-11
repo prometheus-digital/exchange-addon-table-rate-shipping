@@ -1,6 +1,6 @@
 <?php
 /**
- * iThemes Exchange Table Rate Shipping Add-on
+ * ExchangeWP Table Rate Shipping Add-on
  * @package exchange-addon-table-rate-shipping
  * @since 1.0.0
 */
@@ -22,7 +22,7 @@ function it_exchange_table_rate_shipping_addon_register_post_types() {
 	);
 	$args = array(
 		'labels' => $labels,
-		'description'  => __( 'An iThemes Exchange Post Type for storing Table Rates in the system', 'LION' ),
+		'description'  => __( 'An ExchangeWP Post Type for storing Table Rates in the system', 'LION' ),
 		'public'       => false,
 		'show_ui'      => false,
 		'hierarchical' => false,
@@ -33,7 +33,7 @@ function it_exchange_table_rate_shipping_addon_register_post_types() {
 
 	// Register the variant post type
 	register_post_type( 'ite_table_rate', $args );
-	
+
 	// Variant Post Type Args
 	$labels    = array(
 		'name'          => __( 'Table Rate Zones', 'LION' ),
@@ -43,7 +43,7 @@ function it_exchange_table_rate_shipping_addon_register_post_types() {
 	);
 	$args = array(
 		'labels' => $labels,
-		'description'  => __( 'An iThemes Exchange Post Type for storing Table Rate Zones in the system', 'LION' ),
+		'description'  => __( 'An ExchangeWP Post Type for storing Table Rate Zones in the system', 'LION' ),
 		'public'       => false,
 		'show_ui'      => false,
 		'hierarchical' => false,

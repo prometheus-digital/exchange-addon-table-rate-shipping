@@ -1,6 +1,6 @@
 <?php
 /**
- * iThemes Exchange Table Rate Shipping Add-on
+ * ExchangeWP Table Rate Shipping Add-on
  * @package exchange-addon-table-rate-shipping
  * @since 1.0.0
 */
@@ -18,7 +18,7 @@ function it_exchange_table_rate_shipping_addon_show_version_nag() {
 	if ( version_compare( $GLOBALS['it_exchange']['version'], '1.11.2.1', '<' ) ) {
 		?>
 		<div id="it-exchange-add-on-min-version-nag" class="it-exchange-nag">
-			<?php printf( __( 'The Table Rate Shipping add-on requires iThemes Exchange version 1.11.2.1 or greater. %sPlease upgrade Exchange%s.', 'LION' ), '<a href="' . admin_url( 'update-core.php' ) . '">', '</a>' ); ?>
+			<?php printf( __( 'The Table Rate Shipping add-on requires ExchangeWP version 1.11.2.1 or greater. %sPlease upgrade Exchange%s.', 'LION' ), '<a href="' . admin_url( 'update-core.php' ) . '">', '</a>' ); ?>
 		</div>
 		<script type="text/javascript">
 			jQuery( document ).ready( function() {
@@ -42,7 +42,7 @@ add_action( 'admin_notices', 'it_exchange_table_rate_shipping_addon_show_version
 */
 function it_exchange_table_rate_shipping_addon_admin_wp_enqueue_scripts( $hook_suffix ) {
 	global $post;
-			
+
 	if ( isset( $_REQUEST['post_type'] ) ) {
 		$post_type = $_REQUEST['post_type'];
 	} else {
@@ -59,11 +59,11 @@ function it_exchange_table_rate_shipping_addon_admin_wp_enqueue_scripts( $hook_s
 		if ( isset( $post ) && !empty( $post ) )
 			$post_type = $post->post_type;
 	}
-	
+
 	$url_base = ITUtility::get_url_from_file( dirname( __FILE__ ) );
-		
+
 	if ( !empty( $_GET['page'] ) && 'it-exchange-settings' === $_GET['page'] && !empty( $_GET['provider'] ) && 'table-rate-shipping' === $_GET['provider'] ) {
-	
+
 		$deps = array( 'jquery' );
 		wp_enqueue_script( 'it-exchange-table-rate-shipping-admin-js', $url_base . '/js/admin.js' );
 		wp_enqueue_script( 'it-exchange-dialog');
@@ -77,11 +77,11 @@ function it_exchange_table_rate_shipping_addon_admin_wp_enqueue_scripts( $hook_s
 		$deps[] =  'ite-etrs-addon-zones-views';
 		wp_enqueue_script( 'ite-etrs-addon-zones-manager', $url_base . '/js/zones-manager.js', $deps );
 		wp_enqueue_style( 'ite-etrs-addon-zones-manager', $url_base . '/styles/zones-manager.css' );
-	
+
 		add_action( 'it_exchange_table_rate_shipping_print_shipping_tab_footer', 'it_exchange_table_rate_shipping_addon_zones_manager_backbone_template' );
 
 	}
-		
+
 }
 add_action( 'admin_enqueue_scripts', 'it_exchange_table_rate_shipping_addon_admin_wp_enqueue_scripts' );
 
@@ -112,12 +112,12 @@ function it_exchange_table_rate_shipping_addon_admin_wp_enqueue_styles() {
 		if ( isset( $post ) && !empty( $post ) )
 			$post_type = $post->post_type;
 	}
-	
+
 	// US Sales Taxes settings page
 	if ( !empty( $_GET['page'] ) && 'it-exchange-settings' === $_GET['page'] && !empty( $_GET['provider'] ) && 'table-rate-shipping' === $_GET['provider'] ) {
-		
+
 		wp_enqueue_style( 'it-exchange-table-rate-shipping-addon-admin-style', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/styles/admin.css' );
-		
+
 	}
 
 }
@@ -137,7 +137,7 @@ function it_exchange_table_rate_shipping_register_settings_tab_callback( $callba
 			$callback = 'it_exchange_table_rate_shipping_print_shipping_tab';
 		}
 	}
-	return $callback; 
+	return $callback;
 }
 add_action( 'it_exchange_shipping_register_settings_tab_callback', 'it_exchange_table_rate_shipping_register_settings_tab_callback', 100 );
 
@@ -161,7 +161,7 @@ add_action( 'admin_init', 'it_exchange_table_rate_shipping_settings_redirect' );
 
 /**
  * Backbone template for listing all existing zones in the Zones Manager.
- * Invoked by wp.template() and WordPress 
+ * Invoked by wp.template() and WordPress
  *
  * Called by add_action( 'it_exchange_table_rate_shipping_print_shipping_tab_footer', 'it_exchange_table_rate_shipping_addon_zones_manager_backbone_template' );
  *
@@ -178,7 +178,7 @@ function it_exchange_table_rate_shipping_addon_zones_manager_backbone_template()
 					<?php _e( 'Zones Manager', 'LION' ); ?>
 				</h3>
 			</div>
-		
+
 			<div id="it-exchange-table-rate-shipping-zones-manager-content-area">
 				<div id="it-exchange-table-rate-shipping-zones-manager-error-area"></div>
 				<form id="it-exchange-add-on-etrs-zone-manager-form" name="it-exchange-add-on-etrs-zone-manager-form" action="POST">
@@ -186,10 +186,10 @@ function it_exchange_table_rate_shipping_addon_zones_manager_backbone_template()
 						<div id="table-rate-shipping-zones-table-headings">
 						<?php
 							$headings = array(
-								__( 'Country', 'LION' ), 
+								__( 'Country', 'LION' ),
 								__( 'State', 'LION' ),
 								sprintf( __( 'Postal Code(s) %s', 'LION' ), it_exchange_admin_tooltip( __( 'An asterisk (*) would apply the cost to all postal codes within the designated country/state. You can specify a range of postal codes by separating two postal codes with a dash (-); e.g. 73013-73018.', 'LION' ), false ) ),
-								__( 'Delete', 'LION' ), 
+								__( 'Delete', 'LION' ),
 							);
 							echo '<div class="heading-row block-row">';
 							$column = 0;
@@ -246,14 +246,14 @@ add_filter( 'it_exchange_super_widget_valid_states', 'it_exchange_table_rate_shi
 */
 function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart( $shipping_methods ) {
 	if ( $GLOBALS['it_exchange']['shipping']['only_return_methods_available_to_all_cart_products'] ) {
-	
+
 		if ( !empty( $shipping_methods ) ) {
 
 			$general_settings = it_exchange_get_option( 'shipping-general' );
 
 			$shipping_address = it_exchange_get_cart_shipping_address();
 			$cart_total_item_count = it_exchange_get_cart_products_count( true, 'shipping' );
-			$cart_product_count = it_exchange_get_cart_products_count( false, 'shipping' );	
+			$cart_product_count = it_exchange_get_cart_products_count( false, 'shipping' );
 			$cart_weight = it_exchange_get_cart_weight();
 
 			$cart_total_args = array();
@@ -263,46 +263,46 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 			}
 
 			$cart_total = it_exchange_get_cart_subtotal( false, $cart_total_args );
-			
+
 			foreach ( $shipping_methods as $key => $shipping_method ) {
 				if ( 'IT_Exchange_Table_Rate_Shipping_Method' === get_class( $shipping_method ) ) {
 					$unset = false;
-					
+
 					if ( 'default-table-rate-shipping-method' === $key ) {
-						continue; //We don't need to test default, it doesn't handle a condition, so skip this			
+						continue; //We don't need to test default, it doesn't handle a condition, so skip this
 					}
-	
+
 					$table_rate_settings = it_exchange_table_rate_shipping_get_table_rate( $key );
 					if ( 'checked' === $table_rate_settings['enabled'] ) {
 						if ( !empty( $table_rate_settings['geo-restrictions'] ) ) {
-						
+
 							foreach( $table_rate_settings['geo-restrictions'] as $zone_id ) {
 								$unset = true; 	//We're just going to assume that we'll hit a zone limit, but if we get a positive match
 												//we'll set $unset to false and break out of this loop.
-								
+
 								$country = get_post_meta( $zone_id, '_it_exchange_etrs_country_zone', true );
 								if ( empty( $country ) || '*' === $country ) {
-									$unset = false; 	//Country is the highest level zone, if it's All, then it has to be all States/Postal Codes, 
+									$unset = false; 	//Country is the highest level zone, if it's All, then it has to be all States/Postal Codes,
 									break;			//so we don't skip this zone.
 								} else if ( $shipping_address['country'] === $country ) {
 									$state = get_post_meta( $zone_id, '_it_exchange_etrs_state_zone', true );
 									if( empty( $state ) || '*' === $state ) {
-										$unset = false; 	//Country matches and State is a wildcard, so we can skip and break 
+										$unset = false; 	//Country matches and State is a wildcard, so we can skip and break
 										break;
 									} else if ( 'USCONTIGUOUS' === $state ) {
 										$contiguous_states = it_exchange_get_data_set( 'states', array( 'country' => $country ) );
 										unset( $contiguous_states['AK'] ); //Alaska is not contiguous
 										unset( $contiguous_states['HI'] ); //Hawaii is not contiguous
 										if ( !empty( $contiguous_states[$shipping_address['state']] ) ) {
-											$unset = false; //Country and State is a semi-wildcard, so we can skip and break 
+											$unset = false; //Country and State is a semi-wildcard, so we can skip and break
 											break;
 										}
 									} else if ( $shipping_address['state'] === $state ){
 										$zipcodes = get_post_meta( $zone_id, '_it_exchange_etrs_zipcode_zone', true );
 										if( empty( $zipcodes ) || ( '*' === $zip_key = key( $zipcodes ) ) || in_array( $shipping_address['zip'], $zipcodes[$zip_key] ) ) {
-											$unset = false; //Country and State match, and Postal Code is a wildcard or a match, so we can skip and break 
+											$unset = false; //Country and State match, and Postal Code is a wildcard or a match, so we can skip and break
 											break;
-										}			
+										}
 									}
 								}
 							}
@@ -310,44 +310,44 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_cart
 					} else {
 						$unset = true; //this table rate is not enabled
 					}
-					
-					if ( !$unset ) {			
+
+					if ( !$unset ) {
 						switch( $table_rate_settings['condition'] ) {
 							case 'weight':
 								if ( !empty( $table_rate_settings['min'] ) && $cart_weight < $table_rate_settings['min'] ) {
 									$unset = true; //We need to unset this method, it's not usable in this cart
 								} else if ( !empty( $table_rate_settings['max'] ) && $cart_weight > $table_rate_settings['max'] ) {
 									$unset = true; //We need to unset this method, it's not usable in this cart
-								}							
+								}
 								break;
-								
+
 							case 'item_count':
 								if ( !empty( $table_rate_settings['min'] ) && $cart_total_item_count < $table_rate_settings['min'] ) {
 									$unset = true; //We need to unset this method, it's not usable in this cart
 								} else if ( !empty( $table_rate_settings['max'] ) && $cart_total_item_count > $table_rate_settings['max'] ) {
 									$unset = true; //We need to unset this method, it's not usable in this cart
-								} 
+								}
 								break;
-								
+
 							case 'product_count':
 								if ( !empty( $table_rate_settings['min'] ) && $cart_product_count < $table_rate_settings['min'] ) {
 									$unset = true; //We need to unset this method, it's not usable in this cart
 								} else if ( !empty( $table_rate_settings['max'] ) && $cart_product_count > $table_rate_settings['max'] ) {
 									$unset = true; //We need to unset this method, it's not usable in this cart
-								} 
+								}
 								break;
-							
+
 							case 'price':
 							default:
 								if ( !empty( $table_rate_settings['min'] ) && $cart_total < it_exchange_convert_from_database_number( $table_rate_settings['min'] ) ) {
 									$unset = true; //We need to unset this method, it's not usable in this cart
 								} else if ( !empty( $table_rate_settings['max'] ) && $cart_total >  it_exchange_convert_from_database_number( $table_rate_settings['max'] ) ) {
 									$unset = true; //We need to unset this method, it's not usable in this cart
-								} 
+								}
 								break;
 						}
 					}
-					
+
 					if ( $unset ) {
 						unset( $shipping_methods[$key] ); //We need to unset this method, it's not usable in this cart
 					} else {
@@ -375,10 +375,10 @@ add_filter( 'it_exchange_get_available_shipping_methods_for_cart', 'it_exchange_
 */
 function it_exchange_table_rate_shipping_get_cart_shipping_cost( $cart_cost, $shipping_method, $cart_products, $format_price ) {
 	if ( !empty( $shipping_method ) && !empty( $GLOBALS['it_exchange']['shipping']['methods'][$shipping_method] ) ) {
-		
+
 		$class = $GLOBALS['it_exchange']['shipping']['methods'][$shipping_method]['class'];
 		$args = $GLOBALS['it_exchange']['shipping']['methods'][$shipping_method]['args'];
-		
+
 		// Make sure we have a class index and it corresponds to a defined class
 		if ( !empty( $class ) && class_exists( $class ) && 'IT_Exchange_Table_Rate_Shipping_Method' === $class ) {
 			$shipping_address = it_exchange_get_cart_shipping_address();
@@ -386,7 +386,7 @@ function it_exchange_table_rate_shipping_get_cart_shipping_cost( $cart_cost, $sh
 			$cart_product_count = it_exchange_get_cart_products_count( false, 'shipping' );
 			$cart_weight = it_exchange_get_cart_weight();
 			$cart_total = it_exchange_get_cart_subtotal( false );
-			
+
 			if ( 'default-table-rate-shipping-method' === $shipping_method )
 				$shipping_method = 0;
 
@@ -395,16 +395,16 @@ function it_exchange_table_rate_shipping_get_cart_shipping_cost( $cart_cost, $sh
 				$handling      = it_exchange_convert_from_database_number( $table_rate_settings['handling-fee'] );
 				$base_cost     = it_exchange_convert_from_database_number( $table_rate_settings['base-cost'] );
 				$per_item_cost = it_exchange_convert_from_database_number( $table_rate_settings['item-cost'] );
-				
+
 				switch( $table_rate_settings['calculation-type'] ) {
 					case 'per_item':
 						$cart_cost = ( ( $handling + $base_cost ) * $cart_total_item_count ) + ( $per_item_cost * $cart_total_item_count );
 						break;
-					
+
 					case 'per_line':
 						$cart_cost = ( ( $handling + $base_cost ) * $cart_product_count ) + ( $per_item_cost * $cart_total_item_count );
 						break;
-						
+
 					case 'per_order':
 					default:
 						$cart_cost = $handling + $base_cost + ( $per_item_cost * $cart_total_item_count );
@@ -423,27 +423,27 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 		if ( !$GLOBALS['it_exchange']['shipping']['only_return_methods_available_to_all_cart_products'] ) {
 			if ( !empty( $shipping_methods ) ) {
 				$shipping_address = it_exchange_get_cart_shipping_address();
-				
+
 				$item_count = it_exchange_get_cart_product_quantity_by_product_id( $product->ID );
-				
+
 		        $pm = get_post_meta( $product->ID, '_it_exchange_core_weight_dimensions', true );
 		        $weight = empty( $pm['weight'] ) ? 0 : $pm['weight'];
 				$product_weight = $weight * $item_count;
-				
+
 				$product_total = it_exchange_get_cart_product_base_price( array( 'product_id' => $product->ID ), false ) * $item_count;
 				$product_overriding_default_methods = it_exchange_get_shipping_feature_for_product( 'core-available-shipping-methods', $product->ID );
-	
-				foreach ( $shipping_methods as $shipping_method ) {	
-					
+
+				foreach ( $shipping_methods as $shipping_method ) {
+
 					if ( !empty( $shipping_method ) && !empty( $GLOBALS['it_exchange']['shipping']['methods'][$shipping_method] ) ) {
 						$class = $GLOBALS['it_exchange']['shipping']['methods'][$shipping_method]['class'];
 						$args = $GLOBALS['it_exchange']['shipping']['methods'][$shipping_method]['args'];
-	
+
 						if ( !empty( $class ) && class_exists( $class ) && 'IT_Exchange_Table_Rate_Shipping_Method' === $class ) {
 							$unset = false;
-							
+
 							if ( 'default-table-rate-shipping-method' === $shipping_method ) {
-								continue; //We don't need to test default, it doesn't handle a condition, so skip this			
+								continue; //We don't need to test default, it doesn't handle a condition, so skip this
 							}
                             if ( false !== $product_overriding_default_methods && empty( $product_overriding_default_methods->$shipping_method ) ) { //If this shipping method has been disable in the product, disable it here as well
 	                            //We need to do this because of how we're handling the Default shipping rate
@@ -453,34 +453,34 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 								$table_rate_settings = it_exchange_table_rate_shipping_get_table_rate( $shipping_method );
 								if ( 'checked' === $table_rate_settings['enabled'] ) {
 									if ( !empty( $table_rate_settings['geo-restrictions'] ) ) {
-									
+
 										foreach( $table_rate_settings['geo-restrictions'] as $zone_id ) {
 											$unset = true; 	//We're just going to assume that we'll hit a zone limit, but if we get a positive match
 															//we'll set $unset to false and break out of this loop.
-											
+
 											$country = get_post_meta( $zone_id, '_it_exchange_etrs_country_zone', true );
 											if ( empty( $country ) || '*' == $country ) {
-												$unset = false; 	//Country is the highest level zone, if it's All, then it has to be all States/Postal Codes, 
+												$unset = false; 	//Country is the highest level zone, if it's All, then it has to be all States/Postal Codes,
 												break;			//so we don't skip this zone.
 											} else if ( $shipping_address['country'] === $country ) {
 												$state = get_post_meta( $zone_id, '_it_exchange_etrs_state_zone', true );
 												if( empty( $state ) || '*' == $state ) {
-													$unset = false; 	//Country matches and State is a wildcard, so we can skip and break 
+													$unset = false; 	//Country matches and State is a wildcard, so we can skip and break
 													break;
 												} else if ( 'USCONTIGUOUS' === $state ) {
 													$contiguous_states = it_exchange_get_data_set( 'states', array( 'country' => $country ) );
 													unset( $contiguous_states['AK'] ); //Alaska is not contiguous
 													unset( $contiguous_states['HI'] ); //Hawaii is not contiguous
 													if ( !empty( $contiguous_states[$shipping_address['state']] ) ) {
-														$unset = false; //Country and State is a semi-wildcard, so we can skip and break 
+														$unset = false; //Country and State is a semi-wildcard, so we can skip and break
 														break;
 													}
 												} else if ( $shipping_address['state'] === $state ){
 													$zipcodes = get_post_meta( $zone_id, '_it_exchange_etrs_zipcode_zone', true );
 													if( empty( $zipcodes ) || ( '*' === $zip_key = key( $zipcodes ) ) || in_array( $shipping_address['zip'], $zipcodes[$zip_key] ) ) {
-														$unset = false; //Country and State match, and Postal Code is a wildcard or a match, so we can skip and break 
+														$unset = false; //Country and State match, and Postal Code is a wildcard or a match, so we can skip and break
 														break;
-													}			
+													}
 												}
 											}
 										}
@@ -488,45 +488,45 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 								} else {
 									$unset = true; //this table rate is not enabled
 								}
-								
-								if ( !$unset ) {			
+
+								if ( !$unset ) {
 									switch( $table_rate_settings['condition'] ) {
 										case 'weight':
 											if ( !empty( $table_rate_settings['min'] ) && $product_weight < $table_rate_settings['min'] ) {
 												$unset = true; //We need to unset this method, it's not usable in this cart
 											} else if ( !empty( $table_rate_settings['max'] ) && $product_weight > $table_rate_settings['max'] ) {
 												$unset = true; //We need to unset this method, it's not usable in this cart
-											}							
+											}
 											break;
-											
+
 										case 'item_count':
 											if ( !empty( $table_rate_settings['min'] ) && $item_count < $table_rate_settings['min'] ) {
 												$unset = true; //We need to unset this method, it's not usable in this cart
 											} else if ( !empty( $table_rate_settings['max'] ) && $item_count > $table_rate_settings['max'] ) {
 												$unset = true; //We need to unset this method, it's not usable in this cart
-											} 
+											}
 											break;
-					
+
 										case 'product_count': //there is only 1 product in the cart for this call
 											if ( !empty( $table_rate_settings['min'] ) && 1 < $table_rate_settings['min'] ) {
 												$unset = true; //We need to unset this method, it's not usable in this cart
 											} else if ( !empty( $table_rate_settings['max'] ) && 1 > $table_rate_settings['max'] ) {
 												$unset = true; //We need to unset this method, it's not usable in this cart
-											} 
+											}
 											break;
-										
+
 										case 'price':
 										default:
 											if ( !empty( $table_rate_settings['min'] ) && $product_total < it_exchange_convert_from_database_number( $table_rate_settings['min'] ) ) {
 												$unset = true; //We need to unset this method, it's not usable in this cart
 											} else if ( !empty( $table_rate_settings['max'] ) && $product_total >  it_exchange_convert_from_database_number( $table_rate_settings['max'] ) ) {
 												$unset = true; //We need to unset this method, it's not usable in this cart
-											} 
+											}
 											break;
 									}
-								}	
+								}
 							}
-							
+
 							if ( $unset ) {
 								if ( false !== $key = array_search( $shipping_method, $shipping_methods ) ) {
 									unset( $shipping_methods[$key] ); //We need to unset this method, it's not usable in this cart
@@ -536,9 +536,9 @@ function it_exchange_table_rate_shipping_get_available_shipping_methods_for_prod
 									unset( $shipping_methods[$key] ); //We need to unset this method, it's not usable in this cart
 								}
 							}
-							
+
 						}
-					}		
+					}
 				}
 			}
 		}
@@ -551,19 +551,19 @@ function it_exchange_table_rate_shipping_get_shipping_method_cost_for_cart_item(
 	if ( !empty( $method_slug ) && !empty( $GLOBALS['it_exchange']['shipping']['methods'][$method_slug] ) ) {
 		$class = $GLOBALS['it_exchange']['shipping']['methods'][$method_slug]['class'];
 		$args = $GLOBALS['it_exchange']['shipping']['methods'][$method_slug]['args'];
-		
+
 		// Make sure we have a class index and it corresponds to a defined class
 		if ( !empty( $class ) && class_exists( $class ) && 'IT_Exchange_Table_Rate_Shipping_Method' === $class ) {
 			$shipping_address = it_exchange_get_cart_shipping_address();
 
 			$item_count = it_exchange_get_cart_product_quantity_by_product_id( $cart_product['product_id'] );
-			
+
             $pm = get_post_meta( $cart_product['product_id'], '_it_exchange_core_weight_dimensions', true );
             $weight = empty( $pm['weight'] ) ? 0 : $pm['weight'];
 			$product_weight = $weight * $item_count;
-			
-			$product_total = it_exchange_get_cart_product_base_price( array( 'product_id' => $cart_product['product_id'] ), false ) * $item_count;			
-			
+
+			$product_total = it_exchange_get_cart_product_base_price( array( 'product_id' => $cart_product['product_id'] ), false ) * $item_count;
+
 			if ( 'default-table-rate-shipping-method' === $method_slug )
 				$method_slug = 0;
 
@@ -572,13 +572,13 @@ function it_exchange_table_rate_shipping_get_shipping_method_cost_for_cart_item(
 				$handling      = it_exchange_convert_from_database_number( $table_rate_settings['handling-fee'] );
 				$base_cost     = it_exchange_convert_from_database_number( $table_rate_settings['base-cost'] );
 				$per_item_cost = it_exchange_convert_from_database_number( $table_rate_settings['item-cost'] );
-				
+
 				switch( $table_rate_settings['calculation-type'] ) {
 					case 'per_item':
 					case 'per_line':
 						$cost = ( $handling + $base_cost + $per_item_cost ) * $item_count;
 						break;
-						
+
 					case 'per_order':
 					default:
 						$cost = $handling + $base_cost + ( $per_item_cost * $item_count );
@@ -588,7 +588,7 @@ function it_exchange_table_rate_shipping_get_shipping_method_cost_for_cart_item(
 			}
 		}
 	}
-	
+
 	return $cost;
 }
 add_filter( 'it_exchange_get_shipping_method_cost_for_cart_item', 'it_exchange_table_rate_shipping_get_shipping_method_cost_for_cart_item', 10, 4 );

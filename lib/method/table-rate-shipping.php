@@ -1,6 +1,6 @@
 <?php
 /**
- * iThemes Exchange Table Rate Shipping Add-on
+ * ExchangeWP Table Rate Shipping Add-on
  * @package exchange-addon-table-rate-shipping
  * @since 1.0.0
 */
@@ -18,9 +18,9 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 	 * @return void
 	*/
 	function __construct( $product_id=false, $args ) {
-		
+
 		$this->table_rate_args = $args;
-		
+
 		// Set slug
 		$this->set_slug();
 
@@ -109,7 +109,7 @@ class IT_Exchange_Table_Rate_Shipping_Method extends IT_Exchange_Shipping_Method
 	function set_settings() {
 		return;
 	}
-	
+
 	function get_shipping_cost_for_product( $cart_product ) {
 		return 0; //Table Rate Shipping is calculated per cart and per product, we need use a different hook
 	}

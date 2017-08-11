@@ -1,6 +1,6 @@
 <?php
 /**
- * iThemes Exchange Table Rate Shipping Add-on
+ * ExchangeWP Table Rate Shipping Add-on
  * @package exchange-addon-table-rate-shipping
  * @since 1.0.0
 */
@@ -14,7 +14,7 @@
 */
 function it_exchange_table_rate_shipping_addon_register_shipping_provider() {
 	$methods = array( 'default-table-rate-shipping-method' ); //default method, needs to be added to the list first
-	
+
 	$args = array(
 		'post_type'      => 'ite_table_rate',
 		'posts_per_page' => -1,
@@ -26,7 +26,7 @@ function it_exchange_table_rate_shipping_addon_register_shipping_provider() {
 	        $methods[] = $table_rate->post_name;
 		}
 	}
-	
+
     $options = array(
         'label'            => __( 'Table Rate Shipping', 'LION' ),
         'shipping-methods' => $methods,
