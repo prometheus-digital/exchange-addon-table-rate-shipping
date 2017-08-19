@@ -1,6 +1,6 @@
 <?php
 /**
- * iThemes Exchange Table Rate Shipping Add-on
+ * ExchangeWP Table Rate Shipping Add-on
  * @package exchange-addon-table-rate-shipping
  * @since 1.0.0
 */
@@ -12,7 +12,7 @@
  *
  * @return void
 */
-function it_exchange_table_rate_shipping_addon_register_shipping_methods() {	
+function it_exchange_table_rate_shipping_addon_register_shipping_methods() {
 	$default_table_rate = it_exchange_table_rate_shipping_get_table_rate( 0 ); //default always set rate
 	$args = array(
 		'ID'    => 0,

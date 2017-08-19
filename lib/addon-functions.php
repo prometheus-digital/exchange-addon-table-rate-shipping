@@ -1,6 +1,6 @@
 <?php
 /**
- * iThemes Exchange Table Rate Shipping Add-on
+ * ExchangeWP Table Rate Shipping Add-on
  * @package exchange-addon-table-rate-shipping
  * @since 1.0.0
 */
@@ -17,7 +17,7 @@ function it_exchange_table_rate_shipping_form_table_table_rate_settings( $table_
 	$general_settings = it_exchange_get_option( 'shipping-general' );
 	$weight_unit = ( empty( $general_settings['measurements-format'] ) || 'standard' === $general_settings['measurements-format'] ) ? 'lbs' : 'kgs';
 	$return = '';
-		
+
 	if ( false === $table_rate_id ) {
 		//Table Rate doesn't exist yet, create a new one and grab the propert $table_rate_id.
 		$post = array(
@@ -28,16 +28,16 @@ function it_exchange_table_rate_shipping_form_table_table_rate_settings( $table_
 			'post_type'      => 'ite_table_rate',
 		);
 		$table_rate_id = wp_insert_post( $post, true );
-		
+
 		if ( is_wp_error( $table_rate_id ) ) {
 			return $table_rate_id->get_error_messages();
 		}
 	}
-	
+
 	$table_rate = it_exchange_table_rate_shipping_get_table_rate( $table_rate_id );
-			
+
 	$return .= '<div id="table-rate-' . $table_rate_id . '" class="table-rate">';
-	$return .= '<div class="table-rate-values">';	
+	$return .= '<div class="table-rate-values">';
 	$return .= '<div class="item-row block-row">'; //start block-row
 
 	$return .= '<div class="item-column block-column block-column-1 enable-table-rate-column">';
@@ -49,11 +49,11 @@ function it_exchange_table_rate_shipping_form_table_table_rate_settings( $table_
 		$return .= '</span>';
 	}
 	$return .= '</div>';
-	
+
 	$return .= '<div class="item-column block-column block-column-2">';
 	$return .= '<input type="text" class="it-exchange-table-rate-shipping-addon-label" name="it-exchange-table-rate-shipping-addon-table-rate[' . $table_rate_id . '][label]" value="' . $table_rate['label'] . '" />';
 	$return .= '</div>';
-	
+
 	$return .= '<div class="item-column block-column block-column-3">';
 	$return .= '<select class="it-exchange-table-rate-shipping-addon-calculation-type" name="it-exchange-table-rate-shipping-addon-table-rate[' . $table_rate_id . '][calculation-type]">';
 		$return .= '<option value="per_order" ' . selected( 'per_order', $table_rate['calculation-type'], false ) . '">' . __( 'Per Order', 'LION' ) . '</option>';
@@ -61,7 +61,7 @@ function it_exchange_table_rate_shipping_form_table_table_rate_settings( $table_
 		$return .= '<option value="per_line" ' . selected( 'per_line', $table_rate['calculation-type'], false ) . '">' . __( 'Per Line', 'LION' ) . '</option>';
 	$return .= '</select>';
 	$return .= '</div>';
-	
+
 	$return .= '<div class="item-column block-column block-column-4">';
 	if ( 'default' === $table_rate['enabled'] ) {
 		$return .= '<span class="it-exchange-table-rate-shipping-addon-condition">' . __( 'N/A', 'LION' ) . '</span>';
@@ -74,7 +74,7 @@ function it_exchange_table_rate_shipping_form_table_table_rate_settings( $table_
 		$return .= '</select>';
 	}
 	$return .= '</div>';
-	
+
 	if ( 'price' === $table_rate['condition'] ) {
 		if ( !empty( $table_rate['min'] ) ) {
 			$min = html_entity_decode( it_exchange_format_price( it_exchange_convert_from_database_number( $table_rate['min'] ) ) );
@@ -90,7 +90,7 @@ function it_exchange_table_rate_shipping_form_table_table_rate_settings( $table_
 		$min = $table_rate['min'];
 		$max = $table_rate['max'];
 	}
-	
+
 	$return .= '<div class="item-column block-column block-column-5">';
 	if ( 'default' === $table_rate['enabled'] ) {
 		$return .= '<span class="it-exchange-table-rate-shipping-addon-min">' . __( 'N/A', 'LION' ) . '</span>';
@@ -106,19 +106,19 @@ function it_exchange_table_rate_shipping_form_table_table_rate_settings( $table_
 		$return .= '<input type="text" class="it-exchange-table-rate-shipping-addon-max small-text" name="it-exchange-table-rate-shipping-addon-table-rate[' . $table_rate_id . '][max]" value="' . $max . '" />';
 	}
 	$return .= '</div>';
-	
+
 	$return .= '<div class="item-column block-column block-column-7">';
 	$return .= '<input type="text" class="it-exchange-table-rate-shipping-addon-handling-fee small-text" name="it-exchange-table-rate-shipping-addon-table-rate[' . $table_rate_id . '][handling-fee]" value="' . html_entity_decode( it_exchange_format_price( it_exchange_convert_from_database_number( $table_rate['handling-fee'] ) ) ) . '" />';
 	$return .= '</div>';
-	
+
 	$return .= '<div class="item-column block-column block-column-8">';
 	$return .= '<input type="text" class="it-exchange-table-rate-shipping-addon-base-cost small-text" name="it-exchange-table-rate-shipping-addon-table-rate[' . $table_rate_id . '][base-cost]" value="' . html_entity_decode( it_exchange_format_price( it_exchange_convert_from_database_number( $table_rate['base-cost'] ) ) ) . '" />';
 	$return .= '</div>';
-	
+
 	$return .= '<div class="item-column block-column block-column-9">';
 	$return .= '<input type="text" class="it-exchange-table-rate-shipping-addon-item-cost small-text" name="it-exchange-table-rate-shipping-addon-table-rate[' . $table_rate_id . '][item-cost]" value="' . html_entity_decode( it_exchange_format_price( it_exchange_convert_from_database_number( $table_rate['item-cost'] ) ) ) . '" />';
 	$return .= '</div>';
-	
+
 	$return .= '<div class="item-column block-column block-column-10">';
 	if ( 'default' === $table_rate['enabled'] ) {
 		$return .= __( 'Default (Everywhere)', 'LION' );
@@ -135,10 +135,10 @@ function it_exchange_table_rate_shipping_form_table_table_rate_settings( $table_
 		$return .= '<a href class="it-exchange-table-rate-shipping-addon-delete-table-rate it-exchange-remove-item">&times;</a>';
 	}
 	$return .= '</div>';
-	$return .= '</div>';	
 	$return .= '</div>';
 	$return .= '</div>';
-	
+	$return .= '</div>';
+
 	return $return;
 }
 
@@ -162,7 +162,7 @@ function it_exchange_table_rate_shipping_prepare_zone_ouput( $zones=false, $tabl
 			} else {
 				$country_str = $countries[$country];
 			}
-			
+
 			$state = get_post_meta( $zone_id, '_it_exchange_etrs_state_zone', true );
 			$states = it_exchange_get_data_set( 'states', array( 'country' => $country ) );
 			if ( empty( $state ) || is_wp_error( $state ) || ( empty( $states[$state] ) && 'USCONTIGUOUS' !== $state ) ) {
@@ -172,14 +172,14 @@ function it_exchange_table_rate_shipping_prepare_zone_ouput( $zones=false, $tabl
 			} else {
 				$state_str = $states[$state];
 			}
-			
+
 			$zipcodes = get_post_meta( $zone_id, '_it_exchange_etrs_zipcode_zone', true );
 			if( !empty( $zipcodes ) && !is_wp_error( $zipcodes ) ){
 				$zipcode = key( (array)$zipcodes );
 			} else {
 				$zipcode = __( 'All Postal Codes', 'LION' );
 			}
-		
+
 			$data[] = $country_str . ', ' . $state_str . ', ' . $zipcode;
 		}
 		$data[] = "<a class='edit-table-rate-zones' data-rate-id='" . $table_rate_id . "' href='#'>Edit Zones</a>";
@@ -229,7 +229,7 @@ function it_exchange_table_rate_shipping_get_table_rate( $table_rate_id ) {
 			'geo-restrictions' => get_post_meta( $table_rate_id, '_ite_etrs_rate_zones', true ),
 		);
 	}
-		
+
 	return $table_rate;
 }
 
@@ -281,11 +281,11 @@ function it_exchange_get_all_possible_zipcodes_in_range( $min, $max, $position=f
 */
 function it_exchange_table_rate_shipping_addon_setup_zipcode_meta( $table_rate_zone_id, $zipcode='' ) {
 	$zipcode = trim( $zipcode );
-	
+
 	// Canada (and others) use spaces in their zipcodes, we need to strip the to properly handle ranges
 	// This means that we also need to make sure to strip the zipcodes of spaces when checking for table rates
-	$zipcode = preg_replace('/\s+/', '', $zipcode); 
-	
+	$zipcode = preg_replace('/\s+/', '', $zipcode);
+
 	if ( empty( $zipcode ) || 0 === ( $pos = strpos( $zipcode, '*' ) ) ) { //If it starts with an asterisk, it's all
 		$zipcode = '*';
 	} else if ( false !== $pos = strpos( $zipcode, '-' ) ) { //Possibly a range of Postal Codes
@@ -297,12 +297,12 @@ function it_exchange_table_rate_shipping_addon_setup_zipcode_meta( $table_rate_z
 			}
 		}
 	}
-	
+
 	$zipcode = strtoupper( $zipcode );
 	//Now we can try saving in post meta.
 	if ( isset( $min ) && isset( $max ) ) { //range or wildcards
 		$zipcodes = it_exchange_get_all_possible_zipcodes_in_range( $min, $max );
-		update_post_meta( $table_rate_zone_id, '_it_exchange_etrs_zipcode_zone', array( $zipcode => $zipcodes ) );		
+		update_post_meta( $table_rate_zone_id, '_it_exchange_etrs_zipcode_zone', array( $zipcode => $zipcodes ) );
 	} else if ( !empty( $zipcode ) ) { // all zipcodes or single zipcode
 		if ( false !== ( $post = strpos( $zipcode, ',' ) ) ) {
 			$zipcodes = array_map( 'trim', explode( ',', $zipcode ) );

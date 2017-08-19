@@ -1,6 +1,6 @@
 <?php
 /**
- * iThemes Exchange Table Rate Shipping Add-on
+ * ExchangeWP Table Rate Shipping Add-on
  * @package exchange-addon-table-rate-shipping
  * @since 1.0.0
 */
@@ -37,20 +37,20 @@ function it_exchange_table_rate_shipping_settings_callback() {
 */
 function it_exchange_table_rate_shipping_print_shipping_tab() {
 	$form_values = it_exchange_get_option( 'addon_table_rate_shipping' );
-	
-	if ( ! empty( $_POST ) && is_admin() 
-		&& !empty( $_GET['page'] ) && 'it-exchange-settings' == $_GET['page'] 
+
+	if ( ! empty( $_POST ) && is_admin()
+		&& !empty( $_GET['page'] ) && 'it-exchange-settings' == $_GET['page']
 		&& !empty( $_GET['provider'] ) && 'table-rate-shipping' == $_GET['provider'] ) {
 		$form_values = apply_filters( 'it_exchange_save_add_on_settings_table_rate_shipping', $form_values, $_POST );
 	}
-	
+
 	$form_options = array(
 		'id'      => apply_filters( 'it_exchange_add_on_table_rate_shipping', 'it-exchange-add-on-table-rate-shipping-settings' ),
 		'enctype' => apply_filters( 'it_exchange_add_on_table_rate_shipping_settings_form_enctype', false ),
 		'action'  => 'admin.php?page=it-exchange-settings&tab=shipping&provider=table-rate-shipping',
 	);
 	$form         = new ITForm( $form_values, array( 'prefix' => 'it-exchange-add-on-table-rate-shipping' ) );
-	
+
 	if ( !empty( $form_values['errors'] ) ) {
 		foreach( $form_values['errors'] as $error ) {
 			ITUtility::show_error_message( $error );
@@ -58,7 +58,7 @@ function it_exchange_table_rate_shipping_print_shipping_tab() {
 	} else if ( !empty( $form_values['settings_saved'] ) ) {
 		ITUtility::show_status_message( __( 'Settings Saved.', 'LION' ) );
 	}
-	
+
 	?>
 	<div class="wrap">
 		<?php
@@ -68,11 +68,48 @@ function it_exchange_table_rate_shipping_print_shipping_tab() {
 
 		// Print shipping provider tabs
 		$GLOBALS['it_exchange']['shipping_object']->print_provider_settings_tabs();
-		
+
 		?>
-		
+
 		<?php $form->start_form( $form_options, 'it-exchange-table-rate-shipping-settings' ); ?>
 			<?php do_action( 'it_exchange_table_rate_shipping_settings_form_top' ); ?>
+
+
+		<?php
+		$exchangewp_table_rate_shipping_options = get_option( 'it-storage-exchange_table_rate_shipping-addon' );
+		$license = trim( $exchangewp_table_rate_shipping_options['table_rate_shipping-license-key'] );
+		// var_dump($license);
+		$exstatus = trim( get_option( 'exchange_table_rate_shipping_license_status' ) );
+		//  var_dump($exstatus);
+
+		$after_license = wp_nonce_field( 'exchange_table_rate_shipping_nonce', 'exchange_table_rate_shipping_nonce' );
+
+		if( $exstatus !== false && $exstatus == 'valid' ) {
+
+			$after_license .= '<span style="color:green;">active</span>';
+			$after_license .= '<input type="submit" class="button-secondary" name="exchange_table_rate_shipping_license_deactivate" value="Deactivate License"/>';
+		} else {
+			$after_license .= '<input type="submit" class="button-secondary" name="exchange_table_rate_shipping_license_activate" value="Activate License"/>';
+		}
+
+		$options = array(
+			'prefix'      => 'table_rate_shipping-addon',
+			'form-fields' => array(
+				array(
+					'type'	=> 'heading',
+					'label' => __('License Key', 'LION' ),
+					'slug' => 'table_rate_shipping-license-key-heading',
+				),
+				array(
+					'type' => 'text_box',
+					'label' => __('Enter License Key', 'LION'),
+					'slug' => 'table_rate_shipping-license-key',
+					'after' => $after_license,
+				),
+			),
+		);
+		it_exchange_print_admin_settings_form( $options );
+		?>
 			<?php it_exchange_table_rate_shipping_get_settings_form_table( $form, $form_values ); ?>
 			<?php do_action( 'it_exchange_table_rate_shipping_settings_form_bottom' ); ?>
 			<p class="submit">
@@ -97,29 +134,29 @@ function it_exchange_table_rate_shipping_get_settings_form_table( $form, $settin
 		foreach ( $settings as $key => $var )
 			$form->set_option( $key, $var );
 	?>
-	
+
     <div class="it-exchange-addon-settings it-exchange-table-rate-shipping-addon-settings">
 
         <h4>
-        	<?php _e( 'Current Table Rates and Settings', 'LION' ) ?> 
+        	<?php _e( 'Current Table Rates and Settings', 'LION' ) ?>
         </h4>
-                
+
         <div id="table-rate-shipping-rates-table">
         	<?php
 			$headings = array(
-				__( 'Enabled', 'LION' ), 
+				__( 'Enabled', 'LION' ),
 				sprintf( __( 'Label %s', 'LION' ), it_exchange_admin_tooltip( __( 'The name of your shipping option (ex:  "Free Shipping over $50" or "In State Shipping").', 'LION' ), false ) ),
 				sprintf( __( 'Calculation %s', 'LION' ), it_exchange_admin_tooltip( __( 'How the shipping rate is calculated, by order, by number of items or number of products.<ul><li>Per Order - Shipping would be applied only once for the order</li><li>Per Item - Shipping would be applied for each item in the cart</li><li>Per Line - Shipping would be applied based on the number of products in the cart (multiples of a product would only be charged once)</li></ul>', 'LION' ), false ) ),
-				sprintf( __( 'Condition %s', 'LION' ), it_exchange_admin_tooltip( __( "The condition that the shipping cost is based on, for instance the price of the customer's order.", 'LION' ), false ) ), 
-				sprintf( __( 'Min %s', 'LION' ), it_exchange_admin_tooltip( __( '(optional) The minimum amount for the condition to be met (ex:  Condition is Price, minimum price could be $50 for free shipping or Condition is Item Count - minimum item count could be 10 items to qualify for that shipping price).', 'LION' ), false ) ), 
-				sprintf( __( 'Max %s', 'LION' ), it_exchange_admin_tooltip( __( '(optional) The maximum amount for the condition to be met (ex:  Condition is Price, maximum price could be $150 for free shipping or Condition is Item Count - maximum item count could be 20 items to qualify for that shipping price).', 'LION' ), false ) ), 
-				sprintf( __( 'Handling %s', 'LION' ), it_exchange_admin_tooltip( __( '(optional) The handling cost for this shipping rate.', 'LION' ), false ) ), 
+				sprintf( __( 'Condition %s', 'LION' ), it_exchange_admin_tooltip( __( "The condition that the shipping cost is based on, for instance the price of the customer's order.", 'LION' ), false ) ),
+				sprintf( __( 'Min %s', 'LION' ), it_exchange_admin_tooltip( __( '(optional) The minimum amount for the condition to be met (ex:  Condition is Price, minimum price could be $50 for free shipping or Condition is Item Count - minimum item count could be 10 items to qualify for that shipping price).', 'LION' ), false ) ),
+				sprintf( __( 'Max %s', 'LION' ), it_exchange_admin_tooltip( __( '(optional) The maximum amount for the condition to be met (ex:  Condition is Price, maximum price could be $150 for free shipping or Condition is Item Count - maximum item count could be 20 items to qualify for that shipping price).', 'LION' ), false ) ),
+				sprintf( __( 'Handling %s', 'LION' ), it_exchange_admin_tooltip( __( '(optional) The handling cost for this shipping rate.', 'LION' ), false ) ),
 				sprintf( __( 'Base Cost %s', 'LION' ), it_exchange_admin_tooltip( __( 'The base shipping price for the shipping rate.', 'LION' ), false ) ),
 				sprintf( __( 'Per Item Cost %s', 'LION' ), it_exchange_admin_tooltip( __( '(optional) If you chose to charge per item in an order, you would set the price to be charged per item here.', 'LION' ), false ) ),
-				sprintf( __( 'Zones %s', 'LION' ), it_exchange_admin_tooltip( __( 'The geographical location for which this shipping cost would be applied.', 'LION' ), false ) ), 
-				__( 'Delete', 'LION' ), 
+				sprintf( __( 'Zones %s', 'LION' ), it_exchange_admin_tooltip( __( 'The geographical location for which this shipping cost would be applied.', 'LION' ), false ) ),
+				__( 'Delete', 'LION' ),
 			);
-					
+
 			echo '<div class="heading-row block-row">';
 			$column = 0;
 			foreach ( $headings as $heading ) {
@@ -129,11 +166,11 @@ function it_exchange_table_rate_shipping_get_settings_form_table( $form, $settin
 				echo '</div>';
 			}
 			echo '</div>';
-        	
+
 			echo '<div id="table-rate-shipping-table-rates">';
-		
+
 			echo it_exchange_table_rate_shipping_form_table_table_rate_settings( 0 ); //Default rate
-			
+
 			$args = array(
 				'post_type'      => 'ite_table_rate',
 				'posts_per_page' => -1,
@@ -149,12 +186,12 @@ function it_exchange_table_rate_shipping_get_settings_form_table( $form, $settin
     		echo '</div>';
         	?>
         </div>
-        
+
 		<p class="add-new-table-rate">
 			<?php $form->add_button( 'new-table-rate', array( 'value' => __( 'Add New Table Rate', 'LION' ), 'class' => 'button button-secondary button-large' ) ); ?>
 		</p>
 
-        
+
 	</div>
 	<?php
 }
@@ -171,13 +208,13 @@ function it_exchange_save_add_on_settings_table_rate_shipping( $form_values, $po
 
 	$current_table_rates = array();
 	$errors = array();
-		
+
 	if ( !empty( $post_request['it-exchange-table-rate-shipping-addon-table-rate'] ) ) {
-	
+
 		foreach( $post_request['it-exchange-table-rate-shipping-addon-table-rate'] as $table_rate_id => $table_rate ) {
-			
+
 			if ( 0 === $table_rate_id ) {
-			
+
 				//Default, must always exist
 				$table_rate['enabled']          = 'default';
 				$table_rate['label']            = !empty( $table_rate['label'] )            ? $table_rate['label']            : '';
@@ -194,22 +231,22 @@ function it_exchange_save_add_on_settings_table_rate_shipping( $form_values, $po
 					$table_rate['min'] = it_exchange_convert_to_database_number( $table_rate['min'] );
 					$table_rate['max'] = it_exchange_convert_to_database_number( $table_rate['max'] );
 				}
-			
+
 				$table_rate['handling-fee'] = it_exchange_convert_to_database_number( $table_rate['handling-fee'] );
 				$table_rate['base-cost']    = it_exchange_convert_to_database_number( $table_rate['base-cost'] );
 				$table_rate['item-cost']    = it_exchange_convert_to_database_number( $table_rate['item-cost'] );
-				
+
 				update_option( '_it_exchange_table_rate_shipping_default', $table_rate );
 			} else {
 				if ( !in_array( $table_rate_id, $current_table_rates ) )
 					$current_table_rates[] = $table_rate_id;
-				
+
 				$args = array(
 					'p'         => $table_rate_id,
 					'post_type' => 'ite_table_rate',
 				);
 				$table_rates = get_posts( $args );
-			
+
 				if ( empty( $table_rates ) ) {
 					//Table Rate doesn't exist yet, create a new one and add it to the $form_values list.
 					$post = array(
@@ -220,7 +257,7 @@ function it_exchange_save_add_on_settings_table_rate_shipping( $form_values, $po
 						'post_type'      => 'ite_table_rate',
 					);
 					$table_rate_id = wp_insert_post( $post, true );
-					
+
 					if ( is_wp_error( $table_rate_id ) ) {
 						$errors[] = $table_rate_id->get_error_messages();
 					}
@@ -231,65 +268,65 @@ function it_exchange_save_add_on_settings_table_rate_shipping( $form_values, $po
 						'post_type'  => 'ite_table_rate',
 					);
 					$table_rate_id = wp_update_post( $post );
-					
+
 					if ( is_wp_error( $table_rate_id ) ) {
 						$errors[] = $table_rate_id->get_error_messages();
 					}
 				}
-								
+
 				if ( !empty( $table_rate['enabled'] ) && 'checked' === $table_rate['enabled'] )
 					update_post_meta( $table_rate_id, '_it_exchange_table_rate_enabled', 'checked' );
 				else
 					update_post_meta( $table_rate_id, '_it_exchange_table_rate_enabled', 'unchecked' );
-					
+
 				if ( !empty( $table_rate['condition'] ) )
 					update_post_meta( $table_rate_id, '_it_exchange_table_rate_condition', $table_rate['condition'] );
 				else
 					update_post_meta( $table_rate_id, '_it_exchange_table_rate_condition', 'price' ); //Default
-					
+
 				if ( 'price' === $table_rate['condition'] ) {
 					$table_rate['min'] = it_exchange_convert_to_database_number( $table_rate['min'] );
 					$table_rate['max'] = it_exchange_convert_to_database_number( $table_rate['max'] );
 				}
-			
+
 				$table_rate['handling-fee'] = it_exchange_convert_to_database_number( $table_rate['handling-fee'] );
 				$table_rate['base-cost']    = it_exchange_convert_to_database_number( $table_rate['base-cost'] );
 				$table_rate['item-cost']    = it_exchange_convert_to_database_number( $table_rate['item-cost'] );
-				
+
 				if ( !empty( $table_rate['min'] ) )
 					update_post_meta( $table_rate_id, '_it_exchange_table_rate_min', $table_rate['min'] );
 				else
 					delete_post_meta( $table_rate_id, '_it_exchange_table_rate_min' );
-					
+
 				if ( !empty( $table_rate['max'] ) )
 					update_post_meta( $table_rate_id, '_it_exchange_table_rate_max', $table_rate['max'] );
 				else
 					delete_post_meta( $table_rate_id, '_it_exchange_table_rate_max' );
-					
+
 				if ( !empty( $table_rate['handling-fee'] ) )
 					update_post_meta( $table_rate_id, '_it_exchange_table_rate_handling_fee', $table_rate['handling-fee'] );
 				else
 					delete_post_meta( $table_rate_id, '_it_exchange_table_rate_handling_fee' );
-					
+
 				if ( !empty( $table_rate['base-cost'] ) )
 					update_post_meta( $table_rate_id, '_it_exchange_table_rate_base_cost', $table_rate['base-cost'] );
 				else
 					delete_post_meta( $table_rate_id, '_it_exchange_table_rate_base_cost' );
-					
+
 				if ( !empty( $table_rate['item-cost'] ) )
 					update_post_meta( $table_rate_id, '_it_exchange_table_rate_item_cost', $table_rate['item-cost'] );
 				else
 					delete_post_meta( $table_rate_id, '_it_exchange_table_rate_item_cost' );
-					
+
 				if ( !empty( $table_rate['calculation-type'] ) )
 					update_post_meta( $table_rate_id, '_it_exchange_table_rate_calculation_type', $table_rate['calculation-type'] );
 				else
 					update_post_meta( $table_rate_id, '_it_exchange_table_rate_calculation_type', 'per_order' ); //Default
 
 			}
-			
+
 		}
-		
+
 		$args = array(
 			'post_type'      => 'ite_table_rate',
 			'posts_per_page' => -1,
@@ -299,11 +336,11 @@ function it_exchange_save_add_on_settings_table_rate_shipping( $form_values, $po
 		foreach ( $table_rates as $table_rate ) {
 			if ( !in_array( $table_rate->ID, $current_table_rates ) ) {
 				$result = wp_delete_post( $table_rate->ID, true ); //force delete the table rate
-			}				
+			}
 		}
-		
+
 	} else {
-	
+
 		//This should never happen because we ALWAYS have the default rate... but just in case
 		$args = array(
 			'post_type'      => 'ite_table_rate',
@@ -313,21 +350,183 @@ function it_exchange_save_add_on_settings_table_rate_shipping( $form_values, $po
 		foreach ( $table_rates as $table_rate ) {
 			wp_delete_post( $table_rate->ID, true ); //force delete the table rates
 		}
-		
+
 	}
 
 	it_exchange_save_option( 'addon_table_rate_shipping', $form_values );
-		
+
 	if ( !empty( $errors ) ) {
-		
+
 		$form_values['error_messages'] = $errors;
-		
+
 	} else {
-		
+
 		$form_values['settings_saved'] = true;
-		
+
 	}
-	
+
 	return $form_values;
 }
 add_filter( 'it_exchange_save_add_on_settings_table_rate_shipping', 'it_exchange_save_add_on_settings_table_rate_shipping', 10, 2 );
+
+function exchange_table_rate_shipping_license_activate() {
+
+	if( isset( $_POST['exchange_table_rate_shipping_license_activate'] ) ) {
+
+			// run a quick security check
+		 	if( ! check_admin_referer( 'exchange_table_rate_shipping_nonce', 'exchange_table_rate_shipping_nonce' ) )
+				return; // get out if we didn't click the Activate button
+
+			// retrieve the license from the database
+			// $license = trim( get_option( 'exchange_table_rate_shipping_license_key' ) );
+	   $exchangewp_table_rate_shipping_options = get_option( 'it-storage-exchange_table_rate_shipping-addon' );
+	   $license = trim( $exchangewp_table_rate_shipping_options['table_rate_shipping-license-key'] );
+
+			// 	var_dump($license);
+			// data to send in our API request
+			$api_params = array(
+				'edd_action' => 'activate_license',
+				'license'    => $license,
+				'item_name'  => urlencode( 'table-rate-shipping' ), // the name of our product in EDD
+				'url'        => home_url()
+			);
+
+			// Call the custom API.
+			$response = wp_remote_post( 'https://exchangewp.com', array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
+
+			// make sure the response came back okay
+			if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+
+				if ( is_wp_error( $response ) ) {
+					$message = $response->get_error_message();
+				} else {
+					$message = __( 'An error occurred, please try again.' );
+				}
+
+			} else {
+
+				$license_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+				if ( false === $license_data->success ) {
+
+					switch( $license_data->error ) {
+
+						case 'expired' :
+
+							$message = sprintf(
+								__( 'Your license key expired on %s.' ),
+								date_i18n( get_option( 'date_format' ), strtotime( $license_data->expires, current_time( 'timestamp' ) ) )
+							);
+							break;
+
+						case 'revoked' :
+
+							$message = __( 'Your license key has been disabled.' );
+							break;
+
+						case 'missing' :
+
+							$message = __( 'Invalid license.' );
+							break;
+
+						case 'invalid' :
+						case 'site_inactive' :
+
+							$message = __( 'Your license is not active for this URL.' );
+							break;
+
+						case 'item_name_mismatch' :
+
+							$message = sprintf( __( 'This appears to be an invalid license key for %s.' ), 'table_rate_shipping' );
+							break;
+
+						case 'no_activations_left':
+
+							$message = __( 'Your license key has reached its activation limit.' );
+							break;
+
+						default :
+
+							$message = __( 'An error occurred, please try again.' );
+							break;
+					}
+
+				}
+
+			}
+
+			// Check if anything passed on a message constituting a failure
+			if ( ! empty( $message ) ) {
+				$base_url = admin_url( 'admin.php?page=' . 'table_rate_shipping' );
+				$redirect = add_query_arg( array( 'sl_activation' => 'false', 'message' => urlencode( $message ) ), $base_url );
+
+				wp_redirect( $redirect );
+				exit();
+			}
+
+			//$license_data->license will be either "valid" or "invalid"
+			update_option( 'exchange_table_rate_shipping_license_status', $license_data->license );
+			wp_redirect( admin_url( 'admin.php?page=it-exchange-addons&add-on-settings=table-rate-shipping' ) );
+			exit();
+		}
+
+}
+add_action('admin_init', 'exchange_table_rate_shipping_license_deactivate');
+add_action('admin_init', 'exchange_table_rate_shipping_license_activate');
+
+function exchange_table_rate_shipping_license_deactivate() {
+
+	 // deactivate here
+	 // listen for our activate button to be clicked
+		if( isset( $_POST['exchange_table_rate_shipping_license_deactivate'] ) ) {
+
+			// run a quick security check
+		 	if( ! check_admin_referer( 'exchange_table_rate_shipping_nonce', 'exchange_table_rate_shipping_nonce' ) )
+				return; // get out if we didn't click the Activate button
+
+			// retrieve the license from the database
+			// $license = trim( get_option( 'exchange_table_rate_shipping_license_key' ) );
+
+			$exchangewp_table_rate_shipping_options = get_option( 'it-storage-exchange_table_rate_shipping-addon' );
+ 	    $license = trim( $exchangewp_table_rate_shipping_options['table_rate_shipping-license-key'] );
+
+
+
+			// data to send in our API request
+			$api_params = array(
+				'edd_action' => 'deactivate_license',
+				'license'    => $license,
+				'item_name'  => urlencode( 'table-rate-shipping' ), // the name of our product in EDD
+				'url'        => home_url()
+			);
+			// Call the custom API.
+			$response = wp_remote_post( 'https://exchangewp.com', array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
+
+			// make sure the response came back okay
+			if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+
+				if ( is_wp_error( $response ) ) {
+					$message = $response->get_error_message();
+				} else {
+					$message = __( 'An error occurred, please try again.' );
+				}
+
+				// $base_url = admin_url( 'admin.php?page=' . 'table_rate_shipping-license' );
+				// $redirect = add_query_arg( array( 'sl_activation' => 'false', 'message' => urlencode( $message ) ), $base_url );
+
+				wp_redirect( 'admin.php?page=it-exchange-addons&add-on-settings=table-rate-shipping' );
+				exit();
+			}
+
+			// decode the license data
+			$license_data = json_decode( wp_remote_retrieve_body( $response ) );
+			// $license_data->license will be either "deactivated" or "failed"
+			if( $license_data->license == 'deactivated' ) {
+				delete_option( 'exchange_table_rate_shipping_license_status' );
+			}
+
+			wp_redirect( admin_url( 'admin.php?page=it-exchange-addons&add-on-settings=table-rate-shipping' ) );
+			exit();
+
+		}
+}
