@@ -55,7 +55,7 @@ function it_exchange_table_rate_shipping_set_textdomain() {
 add_action( 'plugins_loaded', 'it_exchange_table_rate_shipping_set_textdomain' );
 
 /**
- * Registers Plugin with iThemes updater class
+ * Registers Plugin with ExchangeWP updater class
  *
  * @since 1.0.0
  *
@@ -73,7 +73,7 @@ function exchange_table_rate_shipping_plugin_updater() {
 		$edd_updater = new EDD_SL_Plugin_Updater( 'https://exchangewp.com', __FILE__, array(
 				'version' 		=> '0.0.1', 				// current version number
 				'license' 		=> $license, 		// license key (used get_option above to retrieve from DB)
-				'item_name' 	=> 'Table Rate Shipping', 	  // name of this plugin
+				'item_name' 	=> 'table-rate-shipping', 	  // name of this plugin
 				'author' 	  	=> 'ExchangeWP',    // author of this plugin
 				'url'       	=> home_url(),
 				'wp_override' => true,
