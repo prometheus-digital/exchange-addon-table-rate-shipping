@@ -26,3 +26,5 @@
 	Tweak: Only collect shipping address when necessary.
 1.2.4 - AJ Morris
 	Rebrand and new license system in place.
+1.2.5 - AJ Morris
+	Improved license system in place.
