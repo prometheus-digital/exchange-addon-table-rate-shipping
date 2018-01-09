@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: ExchangeWP - Table Rate Shipping
- * Version: 0.0.1
+ * Version: 1.2.5
  * Description: Adds Table Rate Shipping to ExchangeWP.
  * Plugin URI: https://exchangewp.com/downloads/table-rate-shipping/
  * Author: ExchangeWP
@@ -71,7 +71,7 @@ function exchange_table_rate_shipping_plugin_updater() {
 		$license = $license_key['exchange_license'];
 
 		$edd_updater = new EDD_SL_Plugin_Updater( 'https://exchangewp.com', __FILE__, array(
-				'version' 		=> '0.0.1', 				// current version number
+				'version' 		=> '1.2.5', 				// current version number
 				'license' 		=> $license, 		// license key (used get_option above to retrieve from DB)
 				'item_id' 		=> 557, 	  // name of this plugin
 				'author' 	  	=> 'ExchangeWP',    // author of this plugin
